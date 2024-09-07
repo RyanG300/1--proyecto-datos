@@ -1,0 +1,29 @@
+Actualización de información
+Se le debe permitir al usuario final:
+- Insertar tipo de tareas. (Ryan)
+- Insertar personas. (Ryan)
+- Borrar personas. (Ryan)
+- Insertar tareas activas a una persona X (donde x es ingresado por el usuario).
+- Modificar tareas activas, para que se puede reprogramar en otra fecha y hora.
+- Borrar tareas activas.
+- Insertar subtareas.
+- Modificar el porcentaje de avance y estado de completado a una subtarea X.
+- Insertar que una tarea se completó (insertando en la sublista de tareas realizadas y borradas de la sublista de tareas activas).
+Consultas
+1. ¿Cuál es la persona que tiene más tareas activas?
+2. ¿Cuál es la persona que tiene más tareas activas de un tipo X?
+3. ¿Qué tipo de tarea es el más común? En caso de empate indicarlo.
+4. ¿Cuál es la persona que tiene más tareas vencidas de un tipo X dado una fecha Y.
+5. ¿Cuál es el tipo de tareas más común que se vence sin completarse, dado una fecha Y.
+6. ¿Cuál es el tipo de importancia más usado por las personas? (Ryan)
+7. ¿Qué es el tipo de tarea más común en tareas activas de importancia media? (Ryan)
+8. ¿Qué es el tipo de tarea más común en tareas realizadas de importancia Alta? (Ryan)
+Reportes
+1. Imprimir la lista de tipos de tareas. (Ryan)
+2. Imprimir las personas. (Ryan)
+3. Imprimir las personas sin tareas activas.
+4. Imprimir las tareas activas de una persona X, por orden de fecha y hora. En un rango de fechas ingresado por el usuario (fecha inicio y fecha final). (Ryan)
+5. Imprimir las tareas próximo a vencer (menos de una semana) de una fecha X.
+6. Imprimir todas las subtareas de una tarea X de una persona Y.
+7. Imprimir las tareas realizadas por una persona X.
+8. Imprimir las tareas realizadas al 100%.
