@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stack>
+#include <windows.h>
 
 using namespace std;
 
@@ -47,7 +48,7 @@ struct listaPendientes{
     int year;
     string hora;
     listaPendientes*sig;
-    listaTiposTarea*enlaceTipos;
+    TiposTarea*enlaceTipos;
     struct avanceListas*avance; // solo para los tipos estudio
 
     listaPendiente(int i,string des, string niv,int d,int m, int a,string ho){
@@ -84,7 +85,7 @@ struct tareasCompletadas{
     string descripcion;
     int porcentajeCumplimiento;
     string comentario;
-    listaTiposTarea*tipo;
+    TiposTarea*tipo;
     tareasCompletadas*sig;
 
     tareasCompletadas(int i, string des, int por, string com){
@@ -105,7 +106,7 @@ TiposTarea*insertarTiposTarea(TiposTarea*lista,int id, string nombre,string desc
             return lista;
         }
         else;
-            listaTiposTarea*temp=lista;
+            TiposTarea*temp=lista;
             while(temp->sig!=lista){
                 temp=temp->sig;
             }
@@ -139,9 +140,9 @@ int main(){
                         getline(cin,nombre);
                         cout<<endl<<"Escriba una descripcion de la tarea: ";
                         getline(cin,descripcion);
-                        insertarTiposTarea(,0,nombre,descripcion);
-                        sleep(1);
-                        <<endl<<"Nueva tarea insertada con exito"<<endl;
+                        insertarTiposTarea(listaTiposTarea1,0,nombre,descripcion);
+                        Sleep(1);
+                        cout<<endl<<"Nueva tarea insertada con exito"<<endl;
                     }
                 }
             }
