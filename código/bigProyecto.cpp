@@ -1,6 +1,8 @@
 #include <iostream>
 #include <stack>
-#include <windows.h>
+#include <stdlib.h>
+#include <time.h>
+#include <unistd.h>
 
 using namespace std;
 
@@ -119,30 +121,35 @@ TiposTarea*insertarTiposTarea(TiposTarea*lista,int id, string nombre,string desc
 
 
 int main(){
+    int opcion1=0;
+    int opcion2=0;
     while(true){
         system("cls");
-        int opcion1=0;
+        opcion1=0;
         cout<<"-----Listas locas (titulo provisional)-----"<<endl;
-        cout<<endl<<endl<<"Que quieres hacer papu?"<<endl<<"Editar listas (1)"<<endl<<"Otro (no hay xddd)(2)"<<endl<<endl<<"Digite su respuesta: "<<endl;
+        cout<<endl<<endl<<"Que quieres hacer papu?"<<endl<<"Editar listas (1)"<<endl<<"Otro (no hay xddd)(2)"<<endl<<endl<<"Digite su respuesta: ";
         cin>>opcion1;
+        cin.ignore(10000,'\n');
         switch(opcion1){
             case 1:{
                 system("cls");
-                int opcion2=0;
+                opcion2=0;
                 cout<<"----------Listas----------"<<endl;
-                cout<<"Que quieres hacer papu otra vez xddd: "<<endl<<endl<<"Insertar tipos de tareas (1)"<<endl<<"nada xdd(2)"<<endl<<endl<<"Digite su respuesta: "<<endl;
+                cout<<"Que quieres hacer papu otra vez xddd: "<<endl<<endl<<"Insertar tipos de tareas (1)"<<endl<<"nada xdd(2)"<<endl<<endl<<"Digite su respuesta: ";
                 cin>>opcion2;
+                cin.ignore(10000,'\n');
                 switch(opcion2){
                     case 1:{
+                        system("cls");
                         string nombre;
                         string descripcion;
                         cout<<"Digite el nombre de la tarea: ";
-                        getline(cin,nombre);
+                        getline (cin,nombre);
                         cout<<endl<<"Escriba una descripcion de la tarea: ";
-                        getline(cin,descripcion);
+                        getline (cin,descripcion);
                         insertarTiposTarea(listaTiposTarea1,0,nombre,descripcion);
-                        Sleep(1);
-                        cout<<endl<<"Nueva tarea insertada con exito"<<endl;
+                        cout<<endl<<"Nueva tarea insertada con exito."<<endl;
+                        sleep(2);
                     }
                 }
             }
