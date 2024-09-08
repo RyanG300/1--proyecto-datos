@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
+#include <string>
 
 using namespace std;
 
@@ -29,7 +30,7 @@ struct Personas{ //Recuerda hacer una funcion para que no hayan cedulas repetida
     Personas*ant;
     struct listaPendientes*tareas;
 
-    listaPersonas(string nom,string ape, string ced, int ed){
+    Personas(string nom,string ape, string ced, int ed){
             nombre=nom;
             apellido=ape;
             cedula=ced;
@@ -38,7 +39,7 @@ struct Personas{ //Recuerda hacer una funcion para que no hayan cedulas repetida
             ant=NULL;
             tareas=NULL;
     }
-};
+}*listaPersonas1;
 
 struct listaPendientes{
     int id;
@@ -53,7 +54,7 @@ struct listaPendientes{
     TiposTarea*enlaceTipos;
     struct avanceListas*avance; // solo para los tipos estudio
 
-    listaPendiente(int i,string des, string niv,int d,int m, int a,string ho){
+    listaPendientes(int i,string des, string niv,int d,int m, int a,string ho){
         id=i;
         descripcion=des;
         nivelImportancia=niv;
@@ -124,8 +125,9 @@ Personas*insertarPersonas(Personas*lista,string nombre,string apellido,string ce
         lista=nueva;
         return lista;
         }
-    if(lista.cedula[:2]>cedula[:2]){
+    if(lista->cedula.substr(0,2)>=cedula.substr(0,2)){
         nueva->sig=lista;
+        lista->ant=nueva;
         lista=nueva;
         return lista;
     }
@@ -134,14 +136,15 @@ Personas*insertarPersonas(Personas*lista,string nombre,string apellido,string ce
         while(true){
             if(temp->sig==NULL){
                 lista->sig=nueva;
+                nueva->ant=lista;
                 return lista;
             }
-            else if(temp->sig[:2]>cedula[:2]){
+            else if(temp->sig->cedula.substr(0,2)>=cedula.substr(0,2)){
                 Personas*basura=temp->sig;
                 temp->sig=nueva;
-                nuevo->ant=temp;
-                nuevo->sig=basura;
-                basura->ant=nuevo;
+                nueva->ant=temp;
+                nueva->sig=basura;
+                basura->ant=nueva;
                 return lista;
             }
             temp=temp->sig;
@@ -150,6 +153,36 @@ Personas*insertarPersonas(Personas*lista,string nombre,string apellido,string ce
 
 }
 
+bool comprobarCedulasPersonas(Personas*lista,string cedula){
+        if(cedula[3]=='-'){
+            try{
+                int primero=stoi(cedula.substr(0,2));
+                int segundo=stoi(cedula.substr(4,6));
+                if(cedula.size()==6){
+                    Personas*temp=lista;
+                    while(temp!=NULL){
+                        if(temp->cedula==cedula){
+                            return false;
+                        }
+                        else{
+                            temp=temp->sig;
+                        }
+                    }
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+            catch(int myNum){
+                return false;
+            }
+        }
+        else{
+            return false;
+        }
+
+}
 
 
 int main(){
@@ -167,7 +200,7 @@ int main(){
                 system("cls");
                 opcion2=0;
                 cout<<"----------Listas----------"<<endl;
-                cout<<"Que quieres hacer papu otra vez xddd: "<<endl<<endl<<"Insertar tipos de tareas (1)"<<endl<<"nada xdd(2)"<<endl<<endl<<"Digite su respuesta: ";
+                cout<<"Que quieres hacer papu otra vez xddd: "<<endl<<endl<<"Insertar tipos de tareas (1)"<<endl<<"Insertar personas a la lista (2)"<<endl<<endl<<"Digite su respuesta: ";
                 cin>>opcion2;
                 cin.ignore(10000,'\n');
                 switch(opcion2){
@@ -179,9 +212,41 @@ int main(){
                         getline (cin,nombre);
                         cout<<endl<<"Escriba una descripcion de la tarea: ";
                         getline (cin,descripcion);
-                        insertarTiposTarea(listaTiposTarea1,0,nombre,descripcion);
+                        listaTiposTarea1=insertarTiposTarea(listaTiposTarea1,0,nombre,descripcion);
+                        system("cls");
                         cout<<endl<<"Nueva tarea insertada con exito."<<endl;
                         sleep(2);
+                    }
+                    case 2:{
+                        while(true){
+                            system("cls");
+                            string nombre;
+                            string apellido;
+                            string cedula;
+                            int edad;
+                            cout<<"Digite el nombre de la persona a insertar: ";
+                            getline(cin,nombre);
+                            cout<<endl<<"Digite el apellido: ";
+                            getline(cin,apellido);
+                            cout<<endl<<"Digite la cedula (El formato de la cedula debe ser 123-456): ";
+                            getline(cin,cedula);
+                            if(comprobarCedulasPersonas(listaPersonas1,cedula)==true){
+                                cout<<endl<<"Digite la edad: ";
+                                cin>>(edad);
+                                cin.ignore(10000,'\n');
+                                listaPersonas1=insertarPersonas(listaPersonas1,nombre,apellido,cedula,edad);
+                                system("cls");
+                                cout<<endl<<"Nueva persona insertada con exito."<<endl;
+                                sleep(2);
+                                break;
+                            }
+                            else{
+                                cout<<"El formato de la cedula insertada es invalida, o por el contrario esta repetida en la lista."<<endl;
+                                sleep(2);
+                                continue;
+                            }
+
+                        }
                     }
                 }
             }

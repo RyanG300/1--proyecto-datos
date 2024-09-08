@@ -1,0 +1,24 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "cppdbg",
+      "request": "launch",
+      "args": [],
+      "stopAtEntry": false,
+      "externalConsole": true,
+      "cwd": "c:/Users/Extremetech SC/OneDrive/Escritorio/Tec/Materias/2024/Segundo Semestre/Estructura de datos/big proyecto/1--proyecto-datos/código",
+      "program": "c:/Users/Extremetech SC/OneDrive/Escritorio/Tec/Materias/2024/Segundo Semestre/Estructura de datos/big proyecto/1--proyecto-datos/código/build/Debug/outDebug",
+      "MIMode": "gdb",
+      "miDebuggerPath": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
+    }
+  ]
+}
