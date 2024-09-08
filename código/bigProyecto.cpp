@@ -20,13 +20,13 @@ struct TiposTarea{
     }
 }*listaTiposTarea1;
 
-struct listaPersonas{ //Recuerda hacer una funcion para que no hayan cedulas repetidas
+struct Personas{ //Recuerda hacer una funcion para que no hayan cedulas repetidas
     string nombre;
     string apellido;
     string cedula;
     int edad;
-    listaPersonas*sig;
-    listaPersonas*ant;
+    Personas*sig;
+    Personas*ant;
     struct listaPendientes*tareas;
 
     listaPersonas(string nom,string ape, string ced, int ed){
@@ -116,6 +116,38 @@ TiposTarea*insertarTiposTarea(TiposTarea*lista,int id, string nombre,string desc
             nuevo->sig=lista;
             lista=nuevo;
             return lista;
+}
+
+Personas*insertarPersonas(Personas*lista,string nombre,string apellido,string cedula,int edad){
+    Personas*nueva=new Personas(nombre,apellido,cedula,edad);
+    if(lista==NULL){
+        lista=nueva;
+        return lista;
+        }
+    if(lista.cedula[:2]>cedula[:2]){
+        nueva->sig=lista;
+        lista=nueva;
+        return lista;
+    }
+    else{
+        Personas*temp=lista;
+        while(true){
+            if(temp->sig==NULL){
+                lista->sig=nueva;
+                return lista;
+            }
+            else if(temp->sig[:2]>cedula[:2]){
+                Personas*basura=temp->sig;
+                temp->sig=nueva;
+                nuevo->ant=temp;
+                nuevo->sig=basura;
+                basura->ant=nuevo;
+                return lista;
+            }
+            temp=temp->sig;
+        }
+    }
+
 }
 
 
