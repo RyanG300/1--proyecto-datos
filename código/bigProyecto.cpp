@@ -156,9 +156,9 @@ Personas*insertarPersonas(Personas*lista,string nombre,string apellido,string ce
 bool comprobarCedulasPersonas(Personas*lista,string cedula){
         if(cedula[3]=='-'){
             try{
-                int primero=stoi(cedula.substr(0,2));
+                int primero=stoi(cedula.substr(0,3));
                 int segundo=stoi(cedula.substr(4,6));
-                if(cedula.size()==6){
+                if(cedula.size()==7){
                     Personas*temp=lista;
                     while(temp!=NULL){
                         if(temp->cedula==cedula){
@@ -184,6 +184,48 @@ bool comprobarCedulasPersonas(Personas*lista,string cedula){
 
 }
 
+Personas*borrarPersonas(Personas*lista,string persona){
+    Personas*temp=lista;
+    if(lista->sig==NULL && lista->nombre==persona){
+            lista=NULL;
+            cout<<"Persona eliminada con exito."<<endl;
+            sleep(2);
+            return(lista);
+    }
+    else{
+        while(temp->sig!=NULL && temp->nombre!=persona){
+            temp=temp->sig;
+        }
+        if(temp==NULL){
+                cout<<"El nombre que se digitó no se encuentra en la lista."<<endl;
+                sleep(2);
+                return(lista);
+        }
+        else{
+            if(temp==lista){
+                lista=lista->sig;
+                lista->ant=NULL;
+                cout<<"Persona eliminada con exito."<<endl;
+                sleep(2);
+                return(lista);
+            }
+            else if(temp->sig==NULL){
+                temp->ant->sig=NULL;
+                cout<<"Persona eliminada con exito."<<endl;
+                sleep(2);
+                return(lista);
+            }
+            else{
+                temp->ant->sig=temp->sig;
+                temp->sig->ant=temp->ant;
+                cout<<"Persona eliminada con exito."<<endl;
+                sleep(2);
+                return(lista);
+            }
+        }
+    }
+}
+
 
 int main(){
     int opcion1=0;
@@ -197,55 +239,74 @@ int main(){
         cin.ignore(10000,'\n');
         switch(opcion1){
             case 1:{
-                system("cls");
-                opcion2=0;
-                cout<<"----------Listas----------"<<endl;
-                cout<<"Que quieres hacer papu otra vez xddd: "<<endl<<endl<<"Insertar tipos de tareas (1)"<<endl<<"Insertar personas a la lista (2)"<<endl<<endl<<"Digite su respuesta: ";
-                cin>>opcion2;
-                cin.ignore(10000,'\n');
-                switch(opcion2){
-                    case 1:{
-                        system("cls");
-                        string nombre;
-                        string descripcion;
-                        cout<<"Digite el nombre de la tarea: ";
-                        getline (cin,nombre);
-                        cout<<endl<<"Escriba una descripcion de la tarea: ";
-                        getline (cin,descripcion);
-                        listaTiposTarea1=insertarTiposTarea(listaTiposTarea1,0,nombre,descripcion);
-                        system("cls");
-                        cout<<endl<<"Nueva tarea insertada con exito."<<endl;
-                        sleep(2);
-                    }
-                    case 2:{
-                        while(true){
+                while(true){
+                    system("cls");
+                    opcion2=0;
+                    cout<<"----------Listas----------"<<endl;
+                    cout<<"Que quieres hacer papu otra vez xddd: "<<endl<<endl<<"Insertar tipos de tareas (1)"<<endl<<"Insertar personas a la lista (2)"<<endl<<"Borrar personas de la lista (3)"<<endl<<endl<<"Digite su respuesta: ";
+                    cin>>opcion2;
+                    cin.ignore(10000,'\n');
+                    switch(opcion2){
+                        case 1:{
                             system("cls");
                             string nombre;
-                            string apellido;
-                            string cedula;
-                            int edad;
-                            cout<<"Digite el nombre de la persona a insertar: ";
-                            getline(cin,nombre);
-                            cout<<endl<<"Digite el apellido: ";
-                            getline(cin,apellido);
-                            cout<<endl<<"Digite la cedula (El formato de la cedula debe ser 123-456): ";
-                            getline(cin,cedula);
-                            if(comprobarCedulasPersonas(listaPersonas1,cedula)==true){
-                                cout<<endl<<"Digite la edad: ";
-                                cin>>(edad);
-                                cin.ignore(10000,'\n');
-                                listaPersonas1=insertarPersonas(listaPersonas1,nombre,apellido,cedula,edad);
+                            string descripcion;
+                            cout<<"Digite el nombre de la tarea: ";
+                            getline (cin,nombre);
+                            cout<<endl<<"Escriba una descripcion de la tarea: ";
+                            getline (cin,descripcion);
+                            listaTiposTarea1=insertarTiposTarea(listaTiposTarea1,0,nombre,descripcion);
+                            system("cls");
+                            cout<<endl<<"Nueva tarea insertada con exito."<<endl;
+                            sleep(2);
+                            continue;
+                        }
+                        case 2:{
+                            while(true){
                                 system("cls");
-                                cout<<endl<<"Nueva persona insertada con exito."<<endl;
-                                sleep(2);
-                                break;
+                                string nombre;
+                                string apellido;
+                                string cedula;
+                                int edad;
+                                cout<<"Digite el nombre de la persona a insertar: ";
+                                getline(cin,nombre);
+                                cout<<endl<<"Digite el apellido: ";
+                                getline(cin,apellido);
+                                cout<<endl<<"Digite la cedula (El formato de la cedula debe ser 123-456): ";
+                                getline(cin,cedula);
+                                if(comprobarCedulasPersonas(listaPersonas1,cedula)==true){
+                                    cout<<endl<<"Digite la edad: ";
+                                    cin>>(edad);
+                                    cin.ignore(10000,'\n');
+                                    listaPersonas1=insertarPersonas(listaPersonas1,nombre,apellido,cedula,edad);
+                                    system("cls");
+                                    cout<<endl<<"Nueva persona insertada con exito."<<endl;
+                                    sleep(2);
+                                    break;
+                                }
+                                else{
+                                    cout<<"El formato de la cedula insertada es invalida, o por el contrario esta repetida en la lista."<<endl;
+                                    sleep(2);
+                                    continue;
+                                }
+
                             }
-                            else{
-                                cout<<"El formato de la cedula insertada es invalida, o por el contrario esta repetida en la lista."<<endl;
+                            continue;
+                        }
+                        case 3:{
+                            system("cls");
+                            if(listaPersonas1==NULL){
+                                cout<<"La lista de personas esta vacia. Volviendo al menu"<<endl;
                                 sleep(2);
                                 continue;
                             }
-
+                            else{
+                                string personaBorrar;
+                                cout<<"Digite el nombre de la persona a borrar: ";
+                                getline(cin,personaBorrar);
+                                listaPersonas1=borrarPersonas(listaPersonas1,personaBorrar);
+                                continue;
+                            }
                         }
                     }
                 }
