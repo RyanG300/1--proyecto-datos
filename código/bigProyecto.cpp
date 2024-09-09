@@ -184,20 +184,20 @@ bool comprobarCedulasPersonas(Personas*lista,string cedula){
 
 }
 
-Personas*borrarPersonas(Personas*lista,string persona){
+Personas*borrarPersonas(Personas*lista,string cedula){
     Personas*temp=lista;
-    if(lista->sig==NULL && lista->nombre==persona){
+    if(lista->sig==NULL && lista->cedula==cedula){
             lista=NULL;
             cout<<"Persona eliminada con exito."<<endl;
             sleep(2);
             return(lista);
     }
     else{
-        while(temp->sig!=NULL && temp->nombre!=persona){
+        while(temp->sig!=NULL && temp->cedula!=cedula){
             temp=temp->sig;
         }
         if(temp==NULL){
-                cout<<"El nombre que se digitó no se encuentra en la lista."<<endl;
+                cout<<"La cedula que se digitó no se encuentra en la lista."<<endl;
                 sleep(2);
                 return(lista);
         }
@@ -280,7 +280,7 @@ int main(){
                                     cin.ignore(10000,'\n');
                                     listaPersonas1=insertarPersonas(listaPersonas1,nombre,apellido,cedula,edad);
                                     system("cls");
-                                    cout<<endl<<"Nueva persona insertada con exito."<<endl;
+                                    cout<<"Nueva persona insertada con exito."<<endl;
                                     sleep(2);
                                     break;
                                 }
@@ -302,7 +302,7 @@ int main(){
                             }
                             else{
                                 string personaBorrar;
-                                cout<<"Digite el nombre de la persona a borrar: ";
+                                cout<<"Digite la cedula de la persona a borrar: ";
                                 getline(cin,personaBorrar);
                                 listaPersonas1=borrarPersonas(listaPersonas1,personaBorrar);
                                 continue;
