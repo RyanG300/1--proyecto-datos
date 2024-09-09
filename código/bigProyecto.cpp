@@ -7,7 +7,7 @@
 
 using namespace std;
 
-struct TiposTarea{
+struct TiposTarea{ // idTipoTarea / NombreTipoTarea / DescripcionTarea ---- Lista sencilla
     int idTipoTarea;
     string nombreTipoTarea;
     string descripcionTarea;
@@ -21,7 +21,7 @@ struct TiposTarea{
     }
 }*listaTiposTarea1;
 
-struct Personas{ //Recuerda hacer una funcion para que no hayan cedulas repetidas
+struct Personas{ // nombre / apellido / cedula / edad ---- lista doble ---- enlace a listaPendientes (tareas)
     string nombre;
     string apellido;
     string cedula;
@@ -41,7 +41,7 @@ struct Personas{ //Recuerda hacer una funcion para que no hayan cedulas repetida
     }
 }*listaPersonas1;
 
-struct listaPendientes{
+struct listaPendientes{ // id / descripcion / nivelImportancia / dia / mes / year / hora ---- lista sencilla ---- enlace a TiposTarea (enlaceTipos) y avanceListas (avance)
     int id;
     string descripcion;
     string nivelImportancia;
