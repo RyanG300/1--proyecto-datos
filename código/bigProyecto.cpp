@@ -99,8 +99,6 @@ struct tareasCompletadas{
     }
 };
 
-
-
 TiposTarea*insertarTiposTarea(TiposTarea*lista,int id, string nombre,string descripcion){
       TiposTarea*nuevo=new TiposTarea(id,nombre,descripcion);
         if(lista==NULL){
@@ -226,6 +224,22 @@ Personas*borrarPersonas(Personas*lista,string cedula){
     }
 }
 
+void imprimirTiposTarea(TiposTarea*lista,int numero=0){
+    if(lista==NULL){
+        return;
+    }
+    else{
+        if(numero==0){
+            cout<<"---------Tipos de tarea---------"<<endl<<endl;
+        }
+        cout<<numero<<")    Tipo tarea: "<<lista->nombreTipoTarea<<endl;
+        cout<<"       Id tarea: "<<lista->idTipoTarea<<endl;
+        cout<<"       Descripcion: "<<lista->descripcionTarea<<endl;
+        imprimirTiposTarea(lista->sig,numero+=1);
+    }
+}
+
+
 
 int main(){
     int opcion1=0;
@@ -234,16 +248,20 @@ int main(){
         system("cls");
         opcion1=0;
         cout<<"-----Listas locas (titulo provisional)-----"<<endl;
-        cout<<endl<<endl<<"Que quieres hacer papu?"<<endl<<"Editar listas (1)"<<endl<<"Otro (no hay xddd)(2)"<<endl<<endl<<"Digite su respuesta: ";
+        cout<<endl<<endl<<"Que quieres hacer papu?"<<endl<<"Editar listas (1)"<<endl<<"Otro (no hay xddd)(2)"<<endl<<"Reportes (3)"<<endl<<endl<<"Digite su respuesta: ";
         cin>>opcion1;
         cin.ignore(10000,'\n');
         switch(opcion1){
-            case 1:{
+            case 1:{ //listas
+                bool salir=false;
                 while(true){
+                    if(salir==true){
+                        break;
+                    }
                     system("cls");
                     opcion2=0;
                     cout<<"----------Listas----------"<<endl;
-                    cout<<"Que quieres hacer papu otra vez xddd: "<<endl<<endl<<"Insertar tipos de tareas (1)"<<endl<<"Insertar personas a la lista (2)"<<endl<<"Borrar personas de la lista (3)"<<endl<<endl<<"Digite su respuesta: ";
+                    cout<<"Que quieres hacer papu otra vez xddd: "<<endl<<endl<<"Insertar tipos de tareas (1)"<<endl<<"Insertar personas a la lista (2)"<<endl<<"Borrar personas de la lista (3)"<<endl<<"Insertar tareas (X persona)(4)"<<endl<<"Modificar tareas activas (X persona)(5)"<<endl<<"Borrar tareas activas (X persona)(6)"<<endl<<"Insertar Subtareas (A una tarea activa)(7)"<<endl<<"Modificar el avance de una subtarea (8)"<<endl<<"Completar una tarea (X persona)(9)"<<endl<<"Salir (10)"<<endl<<endl<<"Digite su respuesta: ";
                     cin>>opcion2;
                     cin.ignore(10000,'\n');
                     switch(opcion2){
@@ -308,9 +326,46 @@ int main(){
                                 continue;
                             }
                         }
+                        case 10:{
+                            salir=true;
+                            continue;
+                        }
                     }
                 }
             }
+            case 2:{ //Consultes
+                continue;
+            }
+            case 3:{ //Reportes
+                bool salir=false;
+                while(true){
+                    system("cls");
+                    if(salir==true){
+                        break;
+                    }
+                    int opcion3;
+                    cout<<"-----Reportes-----"<<endl<<endl<<"-Bienvenidos a Reportes. Introduzca la opcion a realizar: "<<endl<<endl<<"Imprimir la lista de tipos de tareas(1)"<<endl<<"Imprimir la lista de personas(2)"<<endl<<"Imprimir las personas sin tarea (3)"<<endl<<"Imprimir las tareas activas(X persona)(4)"<<endl<<"Imprimir las tareas a vencer (5)"<<endl<<"Imprimir las subtareas de una tarea (6)"<<endl<<"Imprimir las tareas realizadas (X persona)(7)"<<endl<<"Imprimir las tareas realizadas (Cualquiera)(8)"<<endl<<"Salir (9)"<<endl<<endl<<"Digite su respuesta: ";
+                    cin>>opcion3;
+                    cin.ignore(10000,'\n');
+                    switch(opcion3){
+                        case 1:{
+                            system("cls");
+                            char nada;
+                            imprimirTiposTarea(listaTiposTarea1);
+                            cout<<endl<<"Para volver digite cualquier tecla: ";
+                            cin>>nada;
+                            cin.ignore(10000,'\n');
+                            continue;
+                        }
+                        case 9:{
+                            salir=true;
+                            continue;
+                        }
+                    }
+                }
+
+            }
+
         }
     }
 
