@@ -7,7 +7,7 @@
 
 using namespace std;
 
-struct TiposTarea{ // idTipoTarea / NombreTipoTarea / DescripcionTarea ---- Lista sencilla
+struct TiposTarea{ // idTipoTarea / NombreTipoTarea / DescripcionTarea ---- Lista circular
     int idTipoTarea;
     string nombreTipoTarea;
     string descripcionTarea;
@@ -113,7 +113,7 @@ TiposTarea*insertarTiposTarea(TiposTarea*lista,int id, string nombre,string desc
             }
             temp->sig=nuevo;
             nuevo->sig=lista;
-            lista=nuevo;
+            //lista=nuevo;
             return lista;
 }
 
@@ -224,26 +224,42 @@ Personas*borrarPersonas(Personas*lista,string cedula){
     }
 }
 
-void imprimirTiposTarea(TiposTarea*lista,int numero=0){
-    if(lista==NULL){
+void imprimirTiposTarea(TiposTarea*lista,int numero=0,int id=-1){
+    if(id==lista->idTipoTarea){
         return;
     }
     else{
         if(numero==0){
             cout<<"---------Tipos de tarea---------"<<endl<<endl;
+            id=lista->idTipoTarea;
         }
         cout<<numero<<")    Tipo tarea: "<<lista->nombreTipoTarea<<endl;
-        cout<<"       Id tarea: "<<lista->idTipoTarea<<endl;
-        cout<<"       Descripcion: "<<lista->descripcionTarea<<endl;
-        imprimirTiposTarea(lista->sig,numero+=1);
+        cout<<"      Id tarea: "<<lista->idTipoTarea<<endl;
+        cout<<"      Descripcion: "<<lista->descripcionTarea<<endl<<endl;
+        imprimirTiposTarea(lista->sig,numero+=1,id=id);
     }
 }
 
+void imprimirPersonas(Personas*lista,int numero=0){
+    if(lista==NULL){
+        return;
+    }
+    else{
+        if(numero==0){
+            cout<<"---------Personas lista---------"<<endl;
+        }
+        cout<<numero<<")     Nombre: "<<lista->nombre<<" "<<lista->apellido<<endl;
+        cout<<"       Cedula: "<<lista->cedula<<endl;
+        cout<<"       Edad: "<<lista->edad<<endl<<endl;
+        imprimirPersonas(lista->sig,numero+=1);
+    }
+}
 
 
 int main(){
     int opcion1=0;
     int opcion2=0;
+    int idTipos=0;
     while(true){
         system("cls");
         opcion1=0;
@@ -273,7 +289,8 @@ int main(){
                             getline (cin,nombre);
                             cout<<endl<<"Escriba una descripcion de la tarea: ";
                             getline (cin,descripcion);
-                            listaTiposTarea1=insertarTiposTarea(listaTiposTarea1,0,nombre,descripcion);
+                            listaTiposTarea1=insertarTiposTarea(listaTiposTarea1,idTipos,nombre,descripcion);
+                            idTipos+=1;
                             system("cls");
                             cout<<endl<<"Nueva tarea insertada con exito."<<endl;
                             sleep(2);
@@ -305,6 +322,7 @@ int main(){
                                 else{
                                     cout<<"El formato de la cedula insertada es invalida, o por el contrario esta repetida en la lista."<<endl;
                                     sleep(2);
+                                    cin.ignore(10000,'\n');
                                     continue;
                                 }
 
@@ -352,6 +370,15 @@ int main(){
                             system("cls");
                             char nada;
                             imprimirTiposTarea(listaTiposTarea1);
+                            cout<<endl<<"Para volver digite cualquier tecla: ";
+                            cin>>nada;
+                            cin.ignore(10000,'\n');
+                            continue;
+                        }
+                        case 2:{
+                            system("cls");
+                            char nada;
+                            imprimirPersonas(listaPersonas1);
                             cout<<endl<<"Para volver digite cualquier tecla: ";
                             cin>>nada;
                             cin.ignore(10000,'\n');
