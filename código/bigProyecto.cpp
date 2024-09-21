@@ -7,7 +7,7 @@
 
 using namespace std;
 
-struct TiposTarea{ // idTipoTarea / NombreTipoTarea / DescripcionTarea ---- Lista circular
+struct TiposTarea{ // int idTipoTarea / string NombreTipoTarea / string DescripcionTarea ---- Lista circular
     int idTipoTarea;
     string nombreTipoTarea;
     string descripcionTarea;
@@ -21,7 +21,7 @@ struct TiposTarea{ // idTipoTarea / NombreTipoTarea / DescripcionTarea ---- List
     }
 }*listaTiposTarea1;
 
-struct Personas{ // nombre / apellido / cedula / edad ---- lista doble ---- enlace a listaPendientes (tareas)
+struct Personas{ // string nombre / string apellido / string cedula / int edad ---- lista doble ---- enlace a listaPendientes (tareas)
     string nombre;
     string apellido;
     string cedula;
@@ -41,7 +41,7 @@ struct Personas{ // nombre / apellido / cedula / edad ---- lista doble ---- enla
     }
 }*listaPersonas1;
 
-struct listaPendientes{ // id / descripcion / nivelImportancia / dia / mes / year / hora ---- lista sencilla ---- enlace a TiposTarea (enlaceTipos) y avanceListas (avance)
+struct listaPendientes{ // int id / string descripcion / string nivelImportancia / int dia / int mes / int year / string hora ---- lista sencilla ---- enlace a TiposTarea (enlaceTipos) y avanceListas (avance)
     int id;
     string descripcion;
     string nivelImportancia;
@@ -67,7 +67,7 @@ struct listaPendientes{ // id / descripcion / nivelImportancia / dia / mes / yea
     }
 };
 
-struct avanceListas{
+struct avanceListas{ // string nombreTarea / string comentario / int porcentaje / bool completado ---- lista simple
     string nombreTarea;
     string comentario;
     int porcentaje;
@@ -83,7 +83,7 @@ struct avanceListas{
     }
 };
 
-struct tareasCompletadas{
+struct tareasCompletadas{ // int id / string descripcion / int porcentajeCumplimiento / string comentario ---- lista simple ---- enlace a TiposTarea
     int id;
     string descripcion;
     int porcentajeCumplimiento;
@@ -99,7 +99,7 @@ struct tareasCompletadas{
     }
 };
 
-TiposTarea*insertarTiposTarea(TiposTarea*lista,int id, string nombre,string descripcion){
+TiposTarea*insertarTiposTarea(TiposTarea*lista,int id, string nombre,string descripcion){ //Insertar en lista TiposTarea
       TiposTarea*nuevo=new TiposTarea(id,nombre,descripcion);
         if(lista==NULL){
             lista=nuevo;
@@ -117,7 +117,7 @@ TiposTarea*insertarTiposTarea(TiposTarea*lista,int id, string nombre,string desc
             return lista;
 }
 
-Personas*insertarPersonas(Personas*lista,string nombre,string apellido,string cedula,int edad){
+Personas*insertarPersonas(Personas*lista,string nombre,string apellido,string cedula,int edad){ //Insertar en lista Personas
     Personas*nueva=new Personas(nombre,apellido,cedula,edad);
     if(lista==NULL){
         lista=nueva;
@@ -151,7 +151,7 @@ Personas*insertarPersonas(Personas*lista,string nombre,string apellido,string ce
 
 }
 
-bool comprobarCedulasPersonas(Personas*lista,string cedula){
+bool comprobarCedulasPersonas(Personas*lista,string cedula){ //Función encargada de buscar cédulas repetidas en la lista Personas, si encuentra impide la inserción de la persona, también se encarga de ver que el formato de la cédula sea correcta.
         if(cedula[3]=='-'){
             try{
                 int primero=stoi(cedula.substr(0,3));
@@ -182,7 +182,7 @@ bool comprobarCedulasPersonas(Personas*lista,string cedula){
 
 }
 
-Personas*borrarPersonas(Personas*lista,string cedula){
+Personas*borrarPersonas(Personas*lista,string cedula){ //Borrar personas de lista Personas
     Personas*temp=lista;
     if(lista->sig==NULL && lista->cedula==cedula){
             lista=NULL;
@@ -224,7 +224,7 @@ Personas*borrarPersonas(Personas*lista,string cedula){
     }
 }
 
-void imprimirTiposTarea(TiposTarea*lista,int numero=0,int id=-1){
+void imprimirTiposTarea(TiposTarea*lista,int numero=0,int id=-1){ //Imprimir en terminal la lista TiposTarea
     if(id==lista->idTipoTarea){
         return;
     }
@@ -240,7 +240,7 @@ void imprimirTiposTarea(TiposTarea*lista,int numero=0,int id=-1){
     }
 }
 
-void imprimirPersonas(Personas*lista,int numero=0){
+void imprimirPersonas(Personas*lista,int numero=0){ //Impimir en terminal la lista de Personas
     if(lista==NULL){
         return;
     }
