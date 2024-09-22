@@ -31,6 +31,7 @@ struct Personas{ // nombre / apellido / cedula / edad ---- lista doble ---- enla
     Personas*sig;
     Personas*ant;
     struct listaPendientes*tareas;
+    struct tareasCompletadas*tareasTerminadas;
 
     Personas(string nom,string ape, string ced, int ed){
             nombre=nom;
@@ -69,7 +70,7 @@ struct listaPendientes{ // id / descripcion / nivelImportancia / dia / mes / yea
     }
 }*listaPendientes1;
 
-struct avanceListas{
+struct avanceListas{ // string nombreTarea / string comentario / int porcentaje / bool completado ---- lista simple
     string nombreTarea;
     string comentario;
     int porcentaje;
@@ -85,9 +86,10 @@ struct avanceListas{
     }
 };
 
-struct tareasCompletadas{
+struct tareasCompletadas{ // int id / string descripcion / int porcentajeCumplimiento / string comentario ---- lista simple ---- enlace a TiposTarea
     int id;
     string descripcion;
+    string nivelImportancia;
     int porcentajeCumplimiento;
     string comentario;
     TiposTarea*tipo;
@@ -101,7 +103,7 @@ struct tareasCompletadas{
     }
 };
 
-TiposTarea*insertarTiposTarea(TiposTarea*lista,int id, string nombre,string descripcion){
+TiposTarea*insertarTiposTarea(TiposTarea*lista,int id, string nombre,string descripcion){ //Insertar en lista TiposTarea
       TiposTarea*nuevo=new TiposTarea(id,nombre,descripcion);
         if(lista==NULL){
             lista=nuevo;
@@ -119,7 +121,7 @@ TiposTarea*insertarTiposTarea(TiposTarea*lista,int id, string nombre,string desc
             return lista;
 }
 
-Personas*insertarPersonas(Personas*lista,string nombre,string apellido,string cedula,int edad){
+Personas*insertarPersonas(Personas*lista,string nombre,string apellido,string cedula,int edad){ //Insertar en lista Personas
     Personas*nueva=new Personas(nombre,apellido,cedula,edad);
     if(lista==NULL){
         lista=nueva;
@@ -153,7 +155,7 @@ Personas*insertarPersonas(Personas*lista,string nombre,string apellido,string ce
 
 }
 
-bool comprobarCedulasPersonas(Personas*lista,string cedula){
+bool comprobarCedulasPersonas(Personas*lista,string cedula){ //Función encargada de buscar cédulas repetidas en la lista Personas, si encuentra impide la inserción de la persona, también se encarga de ver que el formato de la cédula sea correcta.
         if(cedula[3]=='-'){
             try{
                 int primero=stoi(cedula.substr(0,3));
@@ -184,7 +186,7 @@ bool comprobarCedulasPersonas(Personas*lista,string cedula){
 
 }
 
-Personas*borrarPersonas(Personas*lista,string cedula){
+Personas*borrarPersonas(Personas*lista,string cedula){ //Borrar personas de lista Personas
     Personas*temp=lista;
     if(lista->sig==NULL && lista->cedula==cedula){
             lista=NULL;
@@ -237,7 +239,7 @@ Personas* buscarPersonas(Personas*lista, string cedula){
     return NULL;
 }
 
-void imprimirTiposTarea(TiposTarea*lista,int numero=0,int id=-1){
+void imprimirTiposTarea(TiposTarea*lista,int numero=0,int id=-1){ //Imprimir en terminal la lista TiposTarea
     if(id==lista->idTipoTarea){
         return;
     }
@@ -253,7 +255,7 @@ void imprimirTiposTarea(TiposTarea*lista,int numero=0,int id=-1){
     }
 }
 
-void imprimirPersonas(Personas*lista,int numero=0){
+void imprimirPersonas(Personas*lista,int numero=0){ //Impimir en terminal la lista de Personas
     if(lista==NULL){
         return;
     }
@@ -268,8 +270,8 @@ void imprimirPersonas(Personas*lista,int numero=0){
     }
 }
 
-void agregarTareaPersona(Personas* lista, string cedula, int id, 
-                         string descripcion, string nivelImportancia, 
+void agregarTareaPersona(Personas* lista, string cedula, int id,
+                         string descripcion, string nivelImportancia,
                          int dia, int mes, int año, string hora, int idTipoTarea){
     //buscar persona
     Personas* persona=buscarPersonas(lista,cedula);
@@ -292,9 +294,9 @@ void agregarTareaPersona(Personas* lista, string cedula, int id,
             listaPendientes* ant = NULL;
             // encontrar posicion correcta
             while (temp != NULL){
-                if ((temp->year > año) || 
-                   (temp->year == año && temp->mes > mes) || 
-                   (temp->year == año && temp->mes == mes && temp->dia > dia) || 
+                if ((temp->year > año) ||
+                   (temp->year == año && temp->mes > mes) ||
+                   (temp->year == año && temp->mes == mes && temp->dia > dia) ||
                    (temp->year == año && temp->mes == mes && temp->dia == dia && temp->hora > hora)) {
                     break; // Encontró la posición para insertar
                 }
@@ -440,7 +442,7 @@ void tipoTareaMasComun(Personas* lista){
     Personas* temp = lista;
     while (temp != NULL){
         listaPendientes* tarea = temp->tareas;
-        
+
         while (tarea != NULL){
             int idTipo = tarea->enlaceTipos->idTipoTarea;
             conteoTiposTarea[idTipo]++;
@@ -525,8 +527,8 @@ void imprimirTareasProximas(Personas * listaPersonas, int diaActual, int mesActu
             int diferenciaDias = diferenciaEnDias(diaActual, mesActual, añoActual, tarea->dia, tarea->mes, tarea->year);
 
             if (diferenciaDias > 0 && diferenciaDias <= 7){
-                cout << "Tarea próxima a vencer de " << temp->nombre << " " << temp->apellido 
-                     << ": " << tarea->descripcion << " - Fecha de vencimiento: " << tarea->dia << "/" 
+                cout << "Tarea próxima a vencer de " << temp->nombre << " " << temp->apellido
+                     << ": " << tarea->descripcion << " - Fecha de vencimiento: " << tarea->dia << "/"
                      << tarea->mes << "/" << tarea->year << " - Hora: " << tarea->hora << endl;
                 tareasProximas = true;
             }
@@ -537,6 +539,213 @@ void imprimirTareasProximas(Personas * listaPersonas, int diaActual, int mesActu
     if (!tareasProximas){
         cout << "No hay tareas próximas a vencer." << endl;
     }
+}
+
+void importanciaMasComunListaPendientes(Personas*lista){
+    int importanciaBaja=0;
+    int importanciaMedia=0;
+    int importanciaAlta=0;
+    if(lista==NULL){
+        cout<<endl<<"La lista personas esta vacia."<<endl;
+        sleep(2);
+        return;
+    }
+    else{
+        Personas*tempPersonas=lista;
+        while(tempPersonas!=NULL){
+            listaPendientes*tempPendientes=tempPersonas->tareas;
+            while(tempPendientes!=NULL){
+                if(tempPendientes->nivelImportancia=="Baja"){
+                    importanciaBaja+=1;
+                }
+                else if(tempPendientes->nivelImportancia=="Media"){
+                    importanciaMedia+=1;
+                }
+                else if(tempPendientes->nivelImportancia=="Alta"){
+                    importanciaAlta+=1;
+                }
+                tempPendientes=tempPendientes->sig;
+            }
+            tempPersonas=tempPersonas->sig;
+        }
+        if(importanciaBaja==importanciaMedia && importanciaBaja==importanciaAlta){
+            cout<<endl<<"El nivel de importancia de tareas mas utilizada entre las personas son: Baja, media y alta"<<endl;
+            return;
+        }
+        else if(importanciaBaja==importanciaMedia){
+            cout<<endl<<"El nivel de importancia de tareas mas utilizada entre las personas son: baja y media"<<endl;
+            return;
+        }
+        else if(importanciaBaja==importanciaAlta){
+            cout<<endl<<"El nivel de importancia de tareas mas utilizada entre las personas son: baja y alta"<<endl;
+            return;
+        }
+        else if(importanciaBaja>importanciaMedia && importanciaBaja>importanciaAlta){
+            cout<<endl<<"El nivel de importancia de tareas mas utilizada entre las personas es: baja"<<endl;
+            return;
+        }
+        else if(importanciaMedia>importanciaBaja && importanciaMedia>importanciaAlta){
+            cout<<endl<<"El nivel de importancia de tareas mas utilizada entre las personas es: media"<<endl;
+            return;
+        }
+        else{
+            cout<<endl<<"El nivel de importancia de tareas mas utilizada entre las personas es: alta"<<endl;
+            return;
+        }
+    }
+}
+
+void tipoTareaActivasMasComunEnImportanciaMedia(Personas*lista){
+    map<int,int> contadorTiposTarea;
+    if(lista==NULL){
+        cout<<endl<<"La lista personas esta vacia."<<endl;
+        sleep(2);
+        return;
+    }
+    Personas*tempPersonas=lista;
+    while(tempPersonas!=NULL){
+        listaPendientes*tempPendientes=tempPersonas->tareas;
+        while(tempPendientes!=NULL){
+            if(tempPendientes->nivelImportancia=="Media"){
+                int idTipo = tempPendientes->enlaceTipos->idTipoTarea;
+                contadorTiposTarea[idTipo]++;
+                tempPendientes = tempPendientes->sig;
+            }
+            else{
+                tempPendientes = tempPendientes->sig;
+            }
+        }
+        tempPersonas=tempPersonas->sig;
+    }
+    int idMasComun;
+    int cantidadMasComun;
+    bool primeraVez=true;
+    for(auto pair:contadorTiposTarea){
+        if(primeraVez){
+            idMasComun=pair.first;
+            cantidadMasComun=pair.second;
+        }
+        else if(pair.second>cantidadMasComun){
+            idMasComun=pair.first;
+            cantidadMasComun=pair.second;
+        }
+    }
+    cout<<"La tarea mas comun con importancia media es: "<<endl<<buscarTipoTarea(listaTiposTarea1,idMasComun)->nombreTipoTarea<<endl<<" con la id: "<<buscarTipoTarea(listaTiposTarea1,idMasComun)->idTipoTarea<<endl;
+    sleep(2);
+    return;
+}
+
+void tipoTareaRealizadasMasComunEnImportanciaAlta(Personas*lista){
+    map<int,int> contadorTiposTarea;
+    if(lista==NULL){
+        cout<<endl<<"La lista personas esta vacia."<<endl;
+        sleep(2);
+        return;
+    }
+    Personas*tempPersonas=lista;
+    while(tempPersonas!=NULL){
+        tareasCompletadas*tempCompletadas=tempPersonas->tareasTerminadas;
+        while(tempCompletadas!=NULL){
+            if(tempCompletadas->nivelImportancia=="Alto"){
+                int idTipo = tempCompletadas->tipo->idTipoTarea;
+                contadorTiposTarea[idTipo]++;
+                tempCompletadas = tempCompletadas->sig;
+            }
+            else{
+                tempCompletadas = tempCompletadas->sig;
+            }
+        }
+        tempPersonas=tempPersonas->sig;
+    }
+    int idMasComun;
+    int cantidadMasComun;
+    bool primeraVez=true;
+    for(auto pair:contadorTiposTarea){
+        if(primeraVez){
+            idMasComun=pair.first;
+            cantidadMasComun=pair.second;
+        }
+        else if(pair.second>cantidadMasComun){
+            idMasComun=pair.first;
+            cantidadMasComun=pair.second;
+        }
+    }
+    cout<<"La tarea realizada mas comun con importancia alta es: "<<endl<<buscarTipoTarea(listaTiposTarea1,idMasComun)->nombreTipoTarea<<endl<<" con la id: "<<buscarTipoTarea(listaTiposTarea1,idMasComun)->idTipoTarea<<endl;
+    sleep(2);
+    return;
+
+}
+
+void imprimirTareasActivasFecha(Personas*lista,string cedula,string rangoFecha){
+    Personas*tempPersonas=lista;
+    while(tempPersonas!=NULL){
+        if(tempPersonas->cedula==cedula){
+            listaPendientes*tempPendientes=tempPersonas->tareas;
+            while(tempPendientes!=NULL){
+                if(stoi(rangoFecha.substr(0,1))<=tempPendientes->dia
+                        && stoi(rangoFecha.substr(3,4))<=tempPendientes->mes
+                        && stoi(rangoFecha.substr(6,7))<=tempPendientes->year
+                        && stoi(rangoFecha.substr(9,10))>=tempPendientes->dia
+                        && stoi(rangoFecha.substr(12,13))>=tempPendientes->mes
+                        && stoi(rangoFecha.substr(15,16))>=tempPendientes->year){
+
+                    cout<<endl<<"   ID: "<<tempPendientes->id;
+                    cout<<endl<<"   Descripcion: "<<tempPendientes->descripcion;
+                    cout<<endl<<"   Nivel Importancia: "<<tempPendientes->nivelImportancia;
+                    cout<<endl<<"   Fecha limite: "<<tempPendientes->dia<<"/"<<tempPendientes->mes<<"/"<<tempPendientes->year<<" a las "<<tempPendientes->hora<<" horas"<<endl;
+                }
+                tempPendientes=tempPendientes->sig;
+            }
+            string tal;
+            cout<<endl<<"Digite cualquier letra para salir: ";
+            getline(cin,tal);
+            return;
+        }
+        else{
+            tempPersonas=tempPersonas->sig;
+        }
+    }
+    cout<<"La persona que busco no existe."<<endl;
+    sleep(2);
+    return;
+}
+
+bool comprobarFormatoFecha(string rangoFecha){
+    if(rangoFecha[8]=='-'){
+        try{
+            if(stoi(rangoFecha.substr(0,1))>32){
+                return false;
+            }
+            if(stoi(rangoFecha.substr(3,4))>12){
+                return false;
+            }
+
+            int primero=stoi(rangoFecha.substr(6,7));
+
+            if(stoi(rangoFecha.substr(9,10))>32){
+                return false;
+            }
+            if(stoi(rangoFecha.substr(12,13))>12){
+                return false;
+            }
+
+            int segundo=stoi(rangoFecha.substr(15,16));
+
+            if(rangoFecha.size()==17){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        catch(int myNum){
+            return false;
+        }
+    }
+    else{
+        return false;
+    }
+
 }
 
 int main(){
@@ -649,7 +858,72 @@ int main(){
                     }
                 }
             }
-            case 2:{ //Consultes
+            case 2:{ //Consultas
+                bool salir=false;
+                while(true){
+                    system("cls");
+                    if(salir==true){
+                        break;
+                    }
+                    cout<<"----------Consultas----------"<<endl<<endl;
+                    int opcion4;
+                    cout<<"Binvenidos a consultas. Introduzca la opcion a elegir: "<<endl;
+                    cout<<"Imprimir la persona con mas tareas activas (1)"<<endl;
+                    cout<<"Imprimir una persona con mas tareas activas de un determinado tipo (2)"<<endl;
+                    cout<<"Imprimir el tipo de tarea mas comun (3)"<<endl;
+                    cout<<"Imprimir la persona con mas tareas vencidas de un determinado tipo (fecha requerida) (4)"<<endl;
+                    cout<<"Imprimir el tipo de tarea mas comun a vencer (fecha requerida) (5)"<<endl;
+                    cout<<"Imprimir el tipo de importancia mas comun en la lista personas (6)"<<endl;
+                    cout<<"Imprimir el tipo de tarea mas comun con importancia media en la lista persona (7)"<<endl;
+                    cout<<"Imprimir el tipo de tarea mas comun realizadas con una importancia alta (8)"<<endl;
+                    cout<<"Salir (9)"<<endl<<endl;
+                    cout<<"Digite su respuesta: "<<endl;
+                    cin>>opcion4;
+                    cin.ignore(10000,'\n');
+                    switch(opcion4){
+                        case 1:{
+                        }
+                        case 6:{
+                            while(true){
+                                string exit;
+                                system("cls");
+                                importanciaMasComunListaPendientes(listaPersonas1);
+                                cout<<endl<<"Presione cualquier tecla para salir: "<<endl;
+                                getline(cin,exit);
+                                break;
+                            }
+                            continue;
+                        }
+                        case 7:{
+                            while(true){
+                                string exit;
+                                system("cls");
+                                tipoTareaActivasMasComunEnImportanciaMedia(listaPersonas1);
+                                cout<<endl<<"Presione cualquier tecla para salir: "<<endl;
+                                getline(cin,exit);
+                                break;
+                            }
+                            continue;
+                        }
+                        case 8:{
+                            while(true){
+                                string exit;
+                                system("cls");
+                                tipoTareaRealizadasMasComunEnImportanciaAlta(listaPersonas1);
+                                cout<<endl<<"Presione cualquier tecla para salir: "<<endl;
+                                getline(cin,exit);
+                                break;
+                            }
+                            continue;
+                        }
+
+                        case 9:{
+                            salir=true;
+                            continue;
+                        }
+                    }
+
+                }
                 continue;
             }
             case 3:{ //Reportes
@@ -682,12 +956,36 @@ int main(){
                             cin.ignore(10000,'\n');
                             continue;
                         }
+                        case 4:{
+                            while(true){
+                                system("cls");
+                                string cedula;
+                                string rangoFecha;
+                                cout<<"Introduce la cedula de la persona: "<<endl;
+                                getline(cin,cedula);
+                                cout<<"Introduce el rango de fecha a buscar(El formato es 01/01/01-02/02/02): "<<endl;
+                                getline(cin,rangoFecha);
+                                if(comprobarFormatoFecha(rangoFecha)==true){
+                                    imprimirTareasActivasFecha(listaPersonas1,cedula,rangoFecha);
+                                    break;
+                                }
+                                else{
+                                    cout<<"Lo sentimos, el formato de la fecha es incorrecta."<<endl;
+                                    sleep(2);
+                                }
+
+                            }
+                            continue;
+
+
+                        }
                         case 9:{
                             salir=true;
                             continue;
                         }
                     }
                 }
+                continue;
 
             }
 
@@ -698,3 +996,5 @@ int main(){
 
 
 }
+
+
