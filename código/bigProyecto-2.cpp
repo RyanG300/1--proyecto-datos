@@ -541,7 +541,7 @@ void imprimirTareasProximas(Personas * listaPersonas, int diaActual, int mesActu
     }
 }
 
-void importanciaMasComunListaPendientes(Personas*lista){
+void importanciaMasComunListaPendientes(Personas*lista){ //Imprime en terminal la el tipo de importancia de las tareas mas comun entre las personas de la lista Personas
     int importanciaBaja=0;
     int importanciaMedia=0;
     int importanciaAlta=0;
@@ -595,7 +595,7 @@ void importanciaMasComunListaPendientes(Personas*lista){
     }
 }
 
-void tipoTareaActivasMasComunEnImportanciaMedia(Personas*lista){
+void tipoTareaActivasMasComunEnImportanciaMedia(Personas*lista){ //Imprime el tipoTarea más común entre la tareas activas de importnacia media de las personas de la lista Personas
     map<int,int> contadorTiposTarea;
     if(lista==NULL){
         cout<<endl<<"La lista personas esta vacia."<<endl;
@@ -635,7 +635,7 @@ void tipoTareaActivasMasComunEnImportanciaMedia(Personas*lista){
     return;
 }
 
-void tipoTareaRealizadasMasComunEnImportanciaAlta(Personas*lista){
+void tipoTareaRealizadasMasComunEnImportanciaAlta(Personas*lista){ //Imprime el tipoTarea más común entre la tareas completadas de importancia alta de las personas de la lista Personas
     map<int,int> contadorTiposTarea;
     if(lista==NULL){
         cout<<endl<<"La lista personas esta vacia."<<endl;
@@ -676,7 +676,7 @@ void tipoTareaRealizadasMasComunEnImportanciaAlta(Personas*lista){
 
 }
 
-void imprimirTareasActivasFecha(Personas*lista,string cedula,string rangoFecha){
+void imprimirTareasActivasFecha(Personas*lista,string cedula,string rangoFecha){ //Imprime una serie de tareas activas de una persona X por fecha
     Personas*tempPersonas=lista;
     while(tempPersonas!=NULL){
         if(tempPersonas->cedula==cedula){
@@ -710,7 +710,7 @@ void imprimirTareasActivasFecha(Personas*lista,string cedula,string rangoFecha){
     return;
 }
 
-bool comprobarFormatoFecha(string rangoFecha){
+bool comprobarFormatoFecha(string rangoFecha){ //Función encargada de comprobar que el formato de la fecha sea correcta. Esta función se usa junto a "imprimirTareasActivasFecha"
     if(rangoFecha[8]=='-'){
         try{
             if(stoi(rangoFecha.substr(0,1))>32){
