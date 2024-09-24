@@ -748,10 +748,36 @@ bool comprobarFormatoFecha(string rangoFecha){ //Función encargada de comprobar
 
 }
 
+void cargarDatos(){
+    listaTiposTarea1=insertarTiposTarea(listaTiposTarea1,0,"Estudio","Tareas, estudiar y hacer proyectos del tec.");
+    listaTiposTarea1=insertarTiposTarea(listaTiposTarea1,1,"quehaceres del hogar","Limpiar la casa, lavar los platos, lavar la ropa, etc.");
+    listaTiposTarea1=insertarTiposTarea(listaTiposTarea1,2,"Pago de impuestos","Pagar el agua, la luz, el internet, etc.");
+    listaTiposTarea1=insertarTiposTarea(listaTiposTarea1,3,"Deportes","Gym y entrenar con el equipo.");
+    listaTiposTarea1=insertarTiposTarea(listaTiposTarea1,4,"Vida y salud","Citas con la odontologa, medico y demas.");
+    listaPersonas1=insertarPersonas(listaPersonas1,"Ryan","Vargas","345-214",18);
+    listaPersonas1=insertarPersonas(listaPersonas1,"Aaron","Araya","123-456",2);
+    listaPersonas1=insertarPersonas(listaPersonas1,"Daniel","Barrantes","672-192",100);
+    listaPersonas1=insertarPersonas(listaPersonas1,"Vegeta","777","777-777",777);
+    listaPersonas1=insertarPersonas(listaPersonas1,"Mario","Mario","644-633",64);
+    listaPersonas1=agregarTareaPersona(listaPersonas1,"345-214",0,"Terminar el proyecto de datos (denos un 100 profe =) )","Alta",24,9,24,"23:45",0);
+    listaPersonas1=agregarTareaPersona(listaPersonas1,"345-214",1,"Terminar de limpiar el cuarto","Baja",25,10,24,"23:45",1);
+    listaPersonas1=agregarTareaPersona(listaPersonas1,"345-214",2,"Hacer ejercicio","Media",22,9,24,"23:45",3);
+    listaPersonas1=agregarTareaPersona(listaPersonas1,"777-777",0,"Pagar a los editores","Alta",30,9,24,"12:00",2);
+    listaPersonas1=agregarTareaPersona(listaPersonas1,"123-456",0,"Cita con el medico","Media",12,11,24,"13:00",4);
+    listaPersonas1=agregarTareaPersona(listaPersonas1,"672-192",0,"Limpiar la cocina","Baja",30,12,30,"23:45",1);
+    listaPersonas1=agregarTareaPersona(listaPersonas1,"644-633",0,"Salvar a la princesa","Alta",12,12,24,"23:45",1);
+
+
+
+
+
+}
+
 int main(){
     int opcion1=0;
     int opcion2=0;
     int idTipos=0;
+    bool comprobarCarga;
     while(true){
         system("cls");
         opcion1=0;
@@ -760,6 +786,7 @@ int main(){
             <<endl<<"Actualizar Información (1)"
             <<endl<<"Consultas (2)"
             <<endl<<"Reportes (3)"
+            <<endl<<"Rellenar con datos quemados (4)"
             <<endl<<endl<<"Digite su respuesta: ";
         cin>>opcion1;
         cin.ignore(10000,'\n');
@@ -988,7 +1015,21 @@ int main(){
                 continue;
 
             }
-
+            case 4:{ //Datos quemados
+                system("cls");
+                if(comprobarCarga==false){
+                    cargarDatos();
+                    cout<<"Datos cargados con exito"<<endl;
+                    sleep(2);
+                    comprobarCarga=true;
+                    continue;
+                }
+                else{
+                    cout<<"Los datos ya fueron cargados, volviendo al menu"<<endl;
+                    sleep(2);
+                    continue;
+                }
+            }
         }
     }
 
