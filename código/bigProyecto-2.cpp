@@ -1475,6 +1475,9 @@ void cargarDatos(){
     listaPersonas1=insertarPersonas(listaPersonas1,"Daniel","Barrantes","672-192",100);
     listaPersonas1=insertarPersonas(listaPersonas1,"Vegeta","777","777-777",777);
     listaPersonas1=insertarPersonas(listaPersonas1,"Mario","Mario","644-633",64);
+
+    listaPersonas1=agregarTareaAPersona();
+
     listaPersonas1=agregarTareaPersona(listaPersonas1,"345-214",0,"Terminar el proyecto de datos (denos un 100 profe =) )","Alta",24,9,24,"23:45",0);
     listaPersonas1=agregarTareaPersona(listaPersonas1,"345-214",1,"Terminar de limpiar el cuarto","Baja",25,10,24,"23:45",1);
     listaPersonas1=agregarTareaPersona(listaPersonas1,"345-214",2,"Hacer ejercicio","Media",22,9,24,"23:45",3);
