@@ -76,7 +76,7 @@ struct listaPendientes { // id / descripcion / nivelImportancia / dia / mes / ye
         year=a;
         hora=ho;
         sig=NULL;
-        enlaceTipos=NULL;
+        enlaceTipos=tareas;
     }
 }*listaPendientes1;
 
@@ -120,14 +120,16 @@ struct subtareas {
     int porcentajeAvance;
     subtareas* sig;
 };
+*/
 
+/*
 ------Complementos a otras funciones------Complementos a otras funciones------Complementos a otras funciones------Complementos a otras funciones------Complementos a otras funciones
 ------Complementos a otras funciones------Complementos a otras funciones------Complementos a otras funciones------Complementos a otras funciones------Complementos a otras funciones
 ------Complementos a otras funciones------Complementos a otras funciones------Complementos a otras funciones------Complementos a otras funciones------Complementos a otras funciones
 */
 
 //Prototipos
-void imprimirTiposTarea(TiposTarea*,int=0,int=-1);
+void imprimirTiposTarea(TiposTarea*lista,int,int);
 /*
 int contarTareasPorTipo(listaPendientes,int);
 */
@@ -173,12 +175,15 @@ float calcularAvance(Personas*lista,string cedula,int idTarea) {
 }
 
 //2
-bool comprobarCedulasPersonas(Personas*lista,string cedula){ //Función encargada de buscar cédulas repetidas en la lista Personas, si encuentra impide la inserción de la persona, también se encarga de ver que el formato de la cédula sea correcta.
+bool comprobarCedulasPersonas(Personas*lista,string cedula,bool soloFormato=false){ //Función encargada de buscar cédulas repetidas en la lista Personas, si encuentra impide la inserción de la persona, también se encarga de ver que el formato de la cédula sea correcta.
         if(cedula[3]=='-'){
             try{
                 int primero=stoi(cedula.substr(0,3));
                 int segundo=stoi(cedula.substr(4,6));
                 if(cedula.size()==7){
+                    if(soloFormato){
+                        return true;
+                    }
                     Personas*temp=lista;
                     while(temp!=NULL){
                         if(temp->cedula==cedula){
@@ -521,8 +526,8 @@ Personas*insertarPersonas(Personas*lista,string nombre,string apellido,string ce
         Personas*temp=lista;
         while(true){
             if(temp->sig==NULL){
-                lista->sig=nueva;
-                nueva->ant=lista;
+                temp->sig=nueva;
+                nueva->ant=temp;
                 return lista;
             }
             else if(temp->sig->cedula.substr(0,2)>=cedula.substr(0,2)){
@@ -611,7 +616,7 @@ void agregarTareaAPersona(Personas* listaPersonas, TiposTarea* listaTipos, int &
     cin >> hora;
 
     int idTipo;
-    imprimirTiposTarea(listaTipos);
+    imprimirTiposTarea(listaTipos,0,-1);
     cout << "Ingrese el id del tipo de tarea de tu tarea: ";
     cin >> idTipo;
     TiposTarea* tipoTarea = buscarTipoTareaPorID(listaTipos, idTipo);
@@ -896,7 +901,7 @@ void personaConMasTareasPorTipo(Personas* listaPersonas, TiposTarea* listaTipos)
     }
 
     int idTipo;
-    imprimirTiposTarea(listaTipos);
+    imprimirTiposTarea(listaTipos,0,-1);
     cout << "Ingrese el ID del tipo de tarea: ";
     cin >> idTipo;
 
@@ -1298,12 +1303,12 @@ void imprimirTareasActivasFecha(Personas*lista,string cedula,string rangoFecha){
         if(tempPersonas->cedula==cedula){
             listaPendientes*tempPendientes=tempPersonas->tareas;
             while(tempPendientes!=NULL){
-                if(stoi(rangoFecha.substr(0,1))<=tempPendientes->dia
-                        && stoi(rangoFecha.substr(3,4))<=tempPendientes->mes
-                        && stoi(rangoFecha.substr(6,7))<=tempPendientes->year
-                        && stoi(rangoFecha.substr(9,10))>=tempPendientes->dia
-                        && stoi(rangoFecha.substr(12,13))>=tempPendientes->mes
-                        && stoi(rangoFecha.substr(15,16))>=tempPendientes->year){
+                if(stoi(rangoFecha.substr(0,2))<=tempPendientes->dia
+                        && stoi(rangoFecha.substr(3,2))<=tempPendientes->mes
+                        && stoi(rangoFecha.substr(6,2))<=tempPendientes->year
+                        && stoi(rangoFecha.substr(9,2))>=tempPendientes->dia
+                        && stoi(rangoFecha.substr(12,2))>=tempPendientes->mes
+                        && stoi(rangoFecha.substr(15,2))>=tempPendientes->year){
 
                     cout<<endl<<"   ID: "<<tempPendientes->id;
                     cout<<endl<<"   Descripcion: "<<tempPendientes->descripcion;
@@ -1360,10 +1365,14 @@ void imprimirTareasProximasVencer(Personas* listaPersonas){
     if (!hayTareasProximas){
         cout << "No hay tareas próximas a vencer." << endl;
     }
+    string salir;
+    cout<<endl<<"Digite cualquiera tecla para salir: "<<endl;
+    getline(cin,salir);
+    cin.ignore(10000,'\n');
 }
 
 //6 Imprimir todas las subtareas de una tarea X de una persona Y.
-void imprimirSubtareas(Personas*lista,string cedulaPersona,int idTarea) {
+void imprimirSubtareas(Personas*lista,string cedulaPersona,int idTarea,bool salir=true) {
     Personas*tempPersonas=lista;
     while(tempPersonas!=NULL){
         if(tempPersonas->cedula==cedulaPersona){
@@ -1374,15 +1383,21 @@ void imprimirSubtareas(Personas*lista,string cedulaPersona,int idTarea) {
                     cout << "Subtareas:" << endl;
                     while (tempAvance != NULL) {
                         cout << "  - ID: " << tempAvance->idSubtarea <<endl;
-                        cout << "    Descripción: " << tempAvance->nombreTarea <<endl;
+                        cout << "    Descripcion: " << tempAvance->nombreTarea <<endl;
                         cout << "    Porcentaje de avance: " << tempAvance->porcentaje << "%" <<endl;
-                        cout << "    Completada: " << (tempAvance->completado ? "Sí" : "No")<<endl;
+                        cout << "    Completada: " << (tempAvance->completado ? "Si" : "No")<<endl;
                         tempAvance = tempAvance->sig;
                     }
-                    string salir;
-                    cout<<endl<<"Desea salir?: "<<endl;
-                    getline(cin,salir);
-                    return;
+                    if(salir){
+                        string salir;
+                        cout<<endl<<"Desea salir?: "<<endl;
+                        getline(cin,salir);
+                        return;
+                    }
+                    else{
+                        return;
+                    }
+
                 }
                 else{
                     tempPendientes=tempPendientes->sig;
@@ -1464,27 +1479,50 @@ void imprimirTareasRealizadasAl100Porciento(Personas* lista) {
 --------CARGAR DATOS--------CARGAR DATOS--------CARGAR DATOS--------CARGAR DATOS--------CARGAR DATOS--------CARGAR DATOS--------CARGAR DATOS--------CARGAR DATOS--------CARGAR DATOS--------CARGAR DATOS--------CARGAR DATOS--------CARGAR DATOS--------CARGAR DATOS--------CARGAR DATOS--------CARGAR DATOS
 */
 
+Personas*agregarTareaAPersonaCarga(Personas* listaPersonas,string cedula,int idTarea,string descripcion,string nivelImportancia ,int dia,int mes,int year,string hora,int idTipo){
+    Personas* persona = buscarPersonas(listaPersonas, cedula);
+    if (persona == NULL){
+        clearScreen();
+        cout << "Persona no encontrada" << endl;
+        sleep(2);
+        return listaPersonas;
+    }
+    listaPendientes* nuevaTarea = new listaPendientes(idTarea,descripcion,nivelImportancia,dia,mes,year,hora,buscarTipoTarea(listaTiposTarea1,idTipo));
+    if (persona->tareas == NULL){
+        persona->tareas = nuevaTarea;
+    }
+    else{
+        persona->tareas = insertarTareaPendiente(persona->tareas, nuevaTarea);
+    }
+    return listaPersonas;
+}
+
+
+
 void cargarDatos(){
+    //Insertando tipos tarea
     listaTiposTarea1=insertarTiposTarea(listaTiposTarea1,0,"Estudio","Tareas, estudiar y hacer proyectos del tec.");
     listaTiposTarea1=insertarTiposTarea(listaTiposTarea1,1,"quehaceres del hogar","Limpiar la casa, lavar los platos, lavar la ropa, etc.");
     listaTiposTarea1=insertarTiposTarea(listaTiposTarea1,2,"Pago de impuestos","Pagar el agua, la luz, el internet, etc.");
     listaTiposTarea1=insertarTiposTarea(listaTiposTarea1,3,"Deportes","Gym y entrenar con el equipo.");
     listaTiposTarea1=insertarTiposTarea(listaTiposTarea1,4,"Vida y salud","Citas con la odontologa, medico y demas.");
+    //Insertando personas
     listaPersonas1=insertarPersonas(listaPersonas1,"Ryan","Vargas","345-214",18);
     listaPersonas1=insertarPersonas(listaPersonas1,"Aaron","Araya","123-456",2);
     listaPersonas1=insertarPersonas(listaPersonas1,"Daniel","Barrantes","672-192",100);
     listaPersonas1=insertarPersonas(listaPersonas1,"Vegeta","777","777-777",777);
     listaPersonas1=insertarPersonas(listaPersonas1,"Mario","Mario","644-633",64);
+    //Insertando tareas
+    listaPersonas1=agregarTareaAPersonaCarga(listaPersonas1,"345-214",0,"Terminar el proyecto de datos (denos un 100 profe =) )","Alta",24,9,24,"23:45",0);
+    listaPersonas1=agregarTareaAPersonaCarga(listaPersonas1,"345-214",1,"Terminar de limpiar el cuarto","Baja",25,10,24,"23:45",1);
+    listaPersonas1=agregarTareaAPersonaCarga(listaPersonas1,"345-214",2,"Hacer ejercicio","Media",22,9,24,"23:45",3);
+    listaPersonas1=agregarTareaAPersonaCarga(listaPersonas1,"777-777",0,"Pagar a los editores","Alta",30,9,24,"12:00",2);
+    listaPersonas1=agregarTareaAPersonaCarga(listaPersonas1,"123-456",0,"Cita con el medico","Media",12,11,24,"13:00",4);
+    listaPersonas1=agregarTareaAPersonaCarga(listaPersonas1,"672-192",0,"Limpiar la cocina","Baja",30,12,30,"23:45",1);
+    listaPersonas1=agregarTareaAPersonaCarga(listaPersonas1,"644-633",0,"Salvar a la princesa","Alta",12,12,24,"23:45",1);
 
-    listaPersonas1=agregarTareaAPersona();
 
-    listaPersonas1=agregarTareaPersona(listaPersonas1,"345-214",0,"Terminar el proyecto de datos (denos un 100 profe =) )","Alta",24,9,24,"23:45",0);
-    listaPersonas1=agregarTareaPersona(listaPersonas1,"345-214",1,"Terminar de limpiar el cuarto","Baja",25,10,24,"23:45",1);
-    listaPersonas1=agregarTareaPersona(listaPersonas1,"345-214",2,"Hacer ejercicio","Media",22,9,24,"23:45",3);
-    listaPersonas1=agregarTareaPersona(listaPersonas1,"777-777",0,"Pagar a los editores","Alta",30,9,24,"12:00",2);
-    listaPersonas1=agregarTareaPersona(listaPersonas1,"123-456",0,"Cita con el medico","Media",12,11,24,"13:00",4);
-    listaPersonas1=agregarTareaPersona(listaPersonas1,"672-192",0,"Limpiar la cocina","Baja",30,12,30,"23:45",1);
-    listaPersonas1=agregarTareaPersona(listaPersonas1,"644-633",0,"Salvar a la princesa","Alta",12,12,24,"23:45",1);
+
 
 
 
@@ -1506,14 +1544,16 @@ int main(){
     int opcion2=0;
     int idTipos=0;
     int idD = 1;
+    bool Carga=false;
     while(true){
         system("cls");
         opcion1=0;
         cout<<"-----Gestor de Tareas-----"<<endl;
-        cout<<endl<<endl<<"Saludos Metódico. ¿Qué deseas hacer?" << endl
-            <<endl<<"Actualizar Información (1)"
+        cout<<endl<<endl<<"Saludos Usuario. Que deseas hacer?" << endl
+            <<endl<<"Actualizar Informacion (1)"
             <<endl<<"Consultas (2)"
             <<endl<<"Reportes (3)"
+            <<endl<<"Cargar datos quemados(4)"
             <<endl<<endl<<"Digite su respuesta: ";
         cin>>opcion1;
         cin.ignore(10000,'\n');
@@ -1541,8 +1581,8 @@ int main(){
                     cin>>opcion2;
                     cin.ignore(10000,'\n');
                     switch(opcion2){
-                        case 1:{
-                            system("cls");
+                        case 1:{ //Insertar tipos de tareas (1)
+                            clearScreen();
                             string nombre;
                             string descripcion;
                             TiposTarea * tipo;
@@ -1557,9 +1597,9 @@ int main(){
                             sleep(2);
                             continue;
                         }
-                        case 2:{
+                        case 2:{ //Insertar personas a la lista (2)
                             while(true){
-                                system("cls");
+                                clearScreen();
                                 string nombre;
                                 string apellido;
                                 string cedula;
@@ -1590,8 +1630,8 @@ int main(){
                             }
                             continue;
                         }
-                        case 3:{
-                            system("cls");
+                        case 3:{ //Borrar personas de la lista (3)
+                            clearScreen();
                             if(listaPersonas1==NULL){
                                 cout<<"La lista de personas esta vacia. Volviendo al menu"<<endl;
                                 sleep(2);
@@ -1605,31 +1645,125 @@ int main(){
                                 continue;
                             }
                         }
-                        case 4:{
+                        case 4:{ //Insertar tareas (4)
                             clearScreen();
                             agregarTareaAPersona(listaPersonas1, listaTiposTarea1, idD);
                             clearScreen();
                             sleep(2);
                             continue;
                         }
-                        case 5:{
+                        case 5:{ //Modificar tareas activas (5)
                             clearScreen();
                             reprogramarTareasDePersonas(listaPersonas1);
                             sleep(2);
                             continue;
                         }
-                        case 6:{
+                        case 6:{ //Borrar tareas activa (6)
                             clearScreen();
                             borrarTareaDePersona(listaPersonas1);
                             sleep(2);
                             continue;
                         }
-                        case 10:{
+                        case 7:{ //Insertar Subtareas (7)
+                            while(true){
+                                clearScreen();
+                                string cedula;
+                                cout<<"Digite la cedula de la persona que quiera insertarle una subtarea (Formato de la cedula: 123-456): ";
+                                getline(cin,cedula);
+                                if(comprobarCedulasPersonas(listaPersonas1,cedula,true)){
+                                    while(true){
+                                        clearScreen();
+                                        Personas*temp=buscarPersonas(listaPersonas1,cedula);
+                                        imprimirTareasDePersona(temp);
+                                        int idTarea;
+                                        cout<<endl<<"Escriba la id de la tarea a la cual se le quiere insertar subtareas (Recuerde que solo es posible insertar subtareas a tareas de tipo Estudio): ";
+                                        cin>>idTarea;
+                                        cin.ignore(10000,'\n');
+                                        if(buscarTipoTarea(listaTiposTarea1,idTarea)->nombreTipoTarea=="Estudio"){
+                                            string nombreTarea;
+                                            string comentario;
+                                            cout<<endl<<"Escriba el nombre de la subtarea: ";
+                                            getline(cin,nombreTarea);
+                                            cout<<endl<<"Escriba el comentario de la subtarea: ";
+                                            getline(cin,comentario);
+                                            insertarSubtarea(listaPersonas1,cedula,idTarea,nombreTarea,comentario);
+                                            cout<<endl<<"Subtarea insertada con exito"<<endl;
+                                            sleep(2);
+                                            break;
+                                        }
+                                        else{
+                                            clearScreen();
+                                            cout<<"Lo sentimos, la id digitada no es de tipo Estudio, vuelva a intentarlo.";
+                                            sleep(2);
+                                        }
+                                    }
+                                    break;
+                                }
+                                else{
+                                    clearScreen();
+                                    cout<<endl<<"El formato de la cedula dada es incorrecta"<<endl;
+                                    sleep(2);
+                                }
+                            }
+                            continue;
+                        }
+                        case 8:{ //Modificar el avance de una subtarea (8)
+                            while(true){
+                                clearScreen();
+                                string cedula;
+                                cout<<"Porfavor digite la cedula de la persona a modificar su subtarea (El formato de la cedula es 123-456): "<<endl;
+                                getline(cin,cedula);
+                                if(comprobarCedulasPersonas(listaPersonas1,cedula,true)){
+                                    while(true){
+                                        int idTarea;
+                                        clearScreen();
+                                        Personas*temp=buscarPersonas(listaPersonas1,cedula);
+                                        imprimirTareasDePersona(temp);
+                                        cout<<endl;
+                                        cout<<"Porfavor, digite la id de la tarea a la cual se le quiere modificar sus subtareas (Recuerde que solo las tareas de tipo Estudio tienen subtareas):"<<endl;
+                                        cin>>idTarea;
+                                        cin.ignore(10000,'\n');
+                                        if(buscarTipoTarea(listaTiposTarea1,idTarea)->nombreTipoTarea=="Estudio"){
+                                            int idSubTarea;
+                                            int nuevoAvance;
+                                            clearScreen();
+                                            imprimirSubtareas(listaPersonas1,cedula,idTarea,false);
+                                            cout<<endl<<"Ahora digite la id de la subTarea a modificar: "<<endl;
+                                            cin>>idSubTarea;
+                                            cin.ignore(10000,'\n');
+                                            cout<<endl<<"Por ultimo, digite el nuevo avance de la tarea: "<<endl;
+                                            cin>>nuevoAvance;
+                                            cin.ignore(10000,'\n');
+                                            modificarSubtarea(listaPersonas1,cedula,idTarea,idSubTarea,nuevoAvance);
+                                            string salir;
+                                            clearScreen();
+                                            imprimirSubtareas(listaPersonas1,cedula,idTarea,false);
+                                            cout<<endl<<"La modificacion se realizo sin problemas. Desea salir?"<<endl;
+                                            getline(cin,salir);
+                                        }
+                                        else{
+                                            clearScreen();
+                                            cout<<"Lo sentimos, la id digitada no corresponde al tipo Estudio, por favor vuelva a intentarlo"<<endl;
+                                            sleep(2);
+                                        }
+                                    }
+                                    break;
+                                }
+                                else{
+                                    clearScreen();
+                                    cout<<"Lo sentimos, el formato de la cedula es incorrecta, por favor intentelo de nuevo."<<endl;
+                                    sleep(2);
+                                }
+                            }
+                            continue;
+                        }
+                        case 10:{ //Salir (10)
                             salir=true;
                             continue;
                         }
                     }
                 }
+                continue;
             }
             case 2:{ //Consultas
                 bool salir=false;
@@ -1705,7 +1839,6 @@ int main(){
                             }
                             continue;
                         }
-
                         case 9:{
                             salir=true;
                             continue;
@@ -1725,20 +1858,20 @@ int main(){
                     int opcion3;
                     cout<<"-----Reportes-----"<<endl<<endl<<"-Bienvenidos a Reportes. Elija una opcion: "
                     <<endl<<endl<<"Imprimir la lista de tipos de tareas(1)"
-                    <<endl<<"Imprimir la lista de personas(2)"
+                    <<endl<<"Imprimir la lista de personas (2)"
                     <<endl<<"Imprimir las personas sin tarea (3)"
-                    <<endl<<"Imprimir las tareas activas(4)"
+                    <<endl<<"Imprimir las tareas activas de una persona X (Por fecha) (4)"
                     <<endl<<"Imprimir las tareas a vencer (5)"
                     <<endl<<"Imprimir las subtareas de una tarea (6)"
-                    <<endl<<"Imprimir las tareas realizadas (7)"
-                    <<endl<<"Imprimir las tareas realizadas (8)"
+                    <<endl<<"Imprimir las tareas realizadas por X persona (7)"
+                    <<endl<<"Imprimir las tareas realizadas (todas) (8)"
                     <<endl<<"Salir (9)"
                     <<endl<<endl<<"Digite su respuesta: ";
                     cin>>opcion3;
                     cin.ignore(10000,'\n');
                     switch(opcion3){
                         case 1:{
-                            system("cls");
+                            clearScreen();
                             char nada;
                             imprimirTiposTarea(listaTiposTarea1);
                             cout<<endl<<"Para volver digite cualquier tecla: ";
@@ -1747,7 +1880,7 @@ int main(){
                             continue;
                         }
                         case 2:{
-                            system("cls");
+                            clearScreen();
                             char nada;
                             imprimirPersonas(listaPersonas1);
                             cout<<endl<<"Para volver digite cualquier tecla: ";
@@ -1763,7 +1896,7 @@ int main(){
                             }
                         case 4:{
                             while(true){
-                                system("cls");
+                                clearScreen();
                                 string cedula;
                                 string rangoFecha;
                                 cout<<"Introduce la cedula de la persona: "<<endl;
@@ -1788,6 +1921,43 @@ int main(){
                             sleep(2);
                             continue;
                         }
+                        case 6:{
+                            while(true){
+                                clearScreen();
+                                string cedula;
+                                cout<<"Escriba la cedula de la persona a la cual quiere imprimir sus subtareas (El formato es 123-456): ";
+                                getline(cin,cedula);
+                                if(comprobarCedulasPersonas(listaPersonas1,cedula,true)){
+                                    while(true){
+                                        clearScreen();
+                                        Personas*temp=buscarPersonas(listaPersonas1,cedula);
+                                        imprimirTareasDePersona(temp);
+                                        int idTarea;
+                                        cout<<endl<<"Digite la id de la tarea a la cual se le quiere imprimir las subtareas (Recuerde que solo las tareas de tipo Estudios tiene subtareas): ";
+                                        cin>>idTarea;
+                                        cin.ignore(10000,'\n');
+                                        if(buscarTipoTarea(listaTiposTarea1,idTarea)->nombreTipoTarea=="Estudio"){
+                                            clearScreen();
+                                            imprimirSubtareas(listaPersonas1,cedula,idTarea);
+                                            break;
+                                        }
+                                        else{
+                                            clearScreen();
+                                            cout<<endl<<"Lo sentimos, la id que digito no corresponde a un tipo Estudio, por favor vuelva a intentarlo."<<endl;
+                                            sleep(2);
+                                        }
+                                    }
+                                    break;
+                                }
+                                else{
+                                    clearScreen();
+                                    cout<<endl<<"Lo sentimos, el formato de la cedula es incorrecta."<<endl;
+                                    sleep(2);
+                                }
+                            }
+                            continue;
+
+                        }
                         case 9:{
                             salir=true;
                             continue;
@@ -1797,7 +1967,20 @@ int main(){
                 continue;
 
             }
-
+            case 4:{ //Cargar datos
+                if(Carga==false){
+                    clearScreen();
+                    cargarDatos();
+                    cout<<"Carga terminada, volviendo al menu."<<endl;
+                    Carga=true;
+                }
+                else{
+                    clearScreen();
+                    cout<<"Ya se cargo los datos anteriormente, volviendo al menu."<<endl;
+                }
+                sleep(2);
+                continue;
+            }
         }
     }
 }
