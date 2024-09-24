@@ -113,14 +113,7 @@ struct tareasCompletadas{ // int id / string descripcion / int porcentajeCumplim
         tipo=type;
     }
 };
-/*
-struct subtareas {
-    int idSubtarea;
-    std::string descripcion;
-    int porcentajeAvance;
-    subtareas* sig;
-};
-*/
+
 
 /*
 ------Complementos a otras funciones------Complementos a otras funciones------Complementos a otras funciones------Complementos a otras funciones------Complementos a otras funciones
@@ -130,6 +123,7 @@ struct subtareas {
 
 //Prototipos
 void imprimirTiposTarea(TiposTarea*lista,int,int);
+void imprimirPersonas(Personas*lista,int);
 /*
 int contarTareasPorTipo(listaPendientes,int);
 */
@@ -175,7 +169,7 @@ float calcularAvance(Personas*lista,string cedula,int idTarea) {
 }
 
 //2
-bool comprobarCedulasPersonas(Personas*lista,string cedula,bool soloFormato=false){ //FunciÃ³n encargada de buscar cÃ©dulas repetidas en la lista Personas, si encuentra impide la inserciÃ³n de la persona, tambiÃ©n se encarga de ver que el formato de la cÃ©dula sea correcta.
+bool comprobarCedulasPersonas(Personas*lista,string cedula,bool soloFormato=false){ //Función encargada de buscar cédulas repetidas en la lista Personas, si encuentra impide la inserción de la persona, también se encarga de ver que el formato de la cédula sea correcta.
         if(cedula[3]=='-'){
             try{
                 int primero=stoi(cedula.substr(0,3));
@@ -209,26 +203,26 @@ bool comprobarCedulasPersonas(Personas*lista,string cedula,bool soloFormato=fals
 }
 
 //3
-bool comprobarFormatoFecha(string rangoFecha){ //FunciÃ³n encargada de comprobar que el formato de la fecha sea correcta. Esta funciÃ³n se usa junto a "imprimirTareasActivasFecha"
+bool comprobarFormatoFecha(string rangoFecha){ //Función encargada de comprobar que el formato de la fecha sea correcta. Esta función se usa junto a "imprimirTareasActivasFecha"
     if(rangoFecha[8]=='-'){
         try{
-            if(stoi(rangoFecha.substr(0,1))>32){
+            if(stoi(rangoFecha.substr(0,2))>31){
                 return false;
             }
-            if(stoi(rangoFecha.substr(3,4))>12){
-                return false;
-            }
-
-            int primero=stoi(rangoFecha.substr(6,7));
-
-            if(stoi(rangoFecha.substr(9,10))>32){
-                return false;
-            }
-            if(stoi(rangoFecha.substr(12,13))>12){
+            if(stoi(rangoFecha.substr(3,2))>12){
                 return false;
             }
 
-            int segundo=stoi(rangoFecha.substr(15,16));
+            int primero=stoi(rangoFecha.substr(6,2));
+
+            if(stoi(rangoFecha.substr(9,2))>31){
+                return false;
+            }
+            if(stoi(rangoFecha.substr(12,2))>12){
+                return false;
+            }
+
+            int segundo=stoi(rangoFecha.substr(15,2));
 
             if(rangoFecha.size()==17){
                 return true;
@@ -279,63 +273,19 @@ int calcularDiasRestantes(int dia1, int mes1, int year1, int dia2, int mes2, int
     return diasRestantes;
 }
 
-/*
-//5
-void obtenerFechaActual(int& dia, int& mes, int& aÃ±o){
-    time_t fechaActual = time(0);
-    tm* tiempoActual = localtime(&fechaActual);
-    dia = tiempoActual->tm_mday;
-    mes = tiempoActual->tm_mon + 1;
-    aÃ±o = tiempoActual->tm_year + 1900;
-}
-
-//6
-int convertirADias(int dia, int mes, int aÃ±o){
-    tm fecha = {0};
-    fecha.tm_mday = dia;
-    fecha.tm_mon = mes - 1;
-    fecha.tm_year = aÃ±o - 1900;
-    time_t tiempo = mktime(&fecha);
-    return tiempo / (60 * 60 * 24);
-}
-
-//7
-int diferenciaEnDias(int dia1, int mes1, int aÃ±o1, int dia2, int mes2, int aÃ±o2){
-    int dias1 = convertirADias(dia1, mes1, aÃ±o1);
-    int dias2 = convertirADias(dia2, mes2, aÃ±o2);
-    return dias2 - dias1;
-}
-*/
-//6
-/*
-void contarTareasDeCadaTipo(Personas *lista, string cedula, int idTipotarea){
-    Personas* persona = buscarPersonas(lista, cedula);
-    if (persona != NULL){
-        int totalTareas = contarTareasPorTipo(persona->tareas, idTipotarea);
-        cout << "La persona tiene " << totalTareas << " tareas del tipo " << idTipotarea << endl;
-    }
-    else{
-        cout << "Persona no encontrada" << endl;
-    }
-}
-
-//7
-Personas* cantTareasPersona(Personas* lista){
-    Personas * personaMasTareas = NULL;
-    int maxTareas = 0;
-    Personas* temp = lista;
-    while (temp != NULL){
-        int tareasActivas = contarTareasActivas(temp->tareas);
-
-        if (tareasActivas > maxTareas){
-            maxTareas = tareasActivas;
-            personaMasTareas = temp;
+//6 Función sencilla para encontrar una tarea en una persona(No recorre la lista Personas, solo la listaPendientes)
+listaPendientes*buscarTarea(Personas*lista,int idTarea){
+    listaPendientes*temp=lista->tareas;
+    while(temp!=NULL){
+        if(temp->id==idTarea){
+            return temp;
         }
-        temp = temp->sig;
+        else{
+            temp=temp->sig;
+        }
     }
-    return personaMasTareas;
+    return temp;
 }
-*/
 
 //8
 TiposTarea *buscarTipoTarea(TiposTarea* lista, int idTipo){
@@ -377,7 +327,7 @@ TiposTarea* buscarTipoTareaPorID(TiposTarea* lista, int id){
         temp = temp->sig;
     }
     while (temp != lista);
-    cout << "No se encontrÃ³ la tarea" <<endl;
+    cout << "No se encontró la tarea" <<endl;
     return NULL;
 }
 
@@ -418,13 +368,13 @@ listaPendientes* borrarTarea(listaPendientes* lista, int idTarea){
                 listaPendientes* toDelete = temp;
                 lista = temp->sig;
                 delete toDelete;
-                cout << "Tarea borrada con Ã©xito." << endl;
+                cout << "Tarea borrada con éxito." << endl;
                 return lista;
             }
             else {
                 prev->sig = temp->sig;
                 delete temp;
-                cout << "Tarea borrada con Ã©xito." << endl;
+                cout << "Tarea borrada con éxito." << endl;
                 return lista;
             }
         }
@@ -444,7 +394,7 @@ void reprogramarTarea(listaPendientes* tarea){
 
     int nuevoDia, nuevoMes, nuevoYear;
     string nuevaHora;
-    cout << "Ingrese la nueva fecha (dÃ­a mes aÃ±o): ";
+    cout << "Ingrese la nueva fecha (día mes año): ";
     cin >> nuevoDia >> nuevoMes >> nuevoYear;
     cout << "Ingrese la nueva hora [HH:MM]: ";
     cin >> nuevaHora;
@@ -455,7 +405,7 @@ void reprogramarTarea(listaPendientes* tarea){
     tarea->year = nuevoYear;
     tarea->hora = nuevaHora;
     clearScreen();
-    cout << "Tarea reprogramada con Ã©xito." << endl;
+    cout << "Tarea reprogramada con éxito." << endl;
     sleep(2);
 }
 
@@ -469,7 +419,7 @@ void imprimirTareasDePersona(Personas* persona){
     cout << "----------------------------------------" << endl;
     while (temp != NULL){
         cout << "ID: " << temp->id << endl;
-        cout << "DescripciÃ³n: " << temp->descripcion << endl;
+        cout << "Descripción: " << temp->descripcion << endl;
         cout << "Nivel de importancia: " << temp->nivelImportancia << endl;
         cout << "Fecha: " << temp->dia << "/" << temp->mes << "/" <<temp->year;
         cout << " Hora: " << temp->hora << endl;
@@ -485,9 +435,9 @@ void imprimirTareasDePersona(Personas* persona){
 }
 
 /*
-------ACTUALIZACIÃ“N DE INFORMACIÃ“N------ACTUALIZACIÃ“N DE INFORMACIÃ“N------ACTUALIZACIÃ“N DE INFORMACIÃ“N------ACTUALIZACIÃ“N DE INFORMACIÃ“N------ACTUALIZACIÃ“N DE INFORMACIÃ“N
-------ACTUALIZACIÃ“N DE INFORMACIÃ“N------ACTUALIZACIÃ“N DE INFORMACIÃ“N------ACTUALIZACIÃ“N DE INFORMACIÃ“N------ACTUALIZACIÃ“N DE INFORMACIÃ“N------ACTUALIZACIÃ“N DE INFORMACIÃ“N
-------ACTUALIZACIÃ“N DE INFORMACIÃ“N------ACTUALIZACIÃ“N DE INFORMACIÃ“N------ACTUALIZACIÃ“N DE INFORMACIÃ“N------ACTUALIZACIÃ“N DE INFORMACIÃ“N------ACTUALIZACIÃ“N DE INFORMACIÃ“N
+------ACTUALIZACIÓN DE INFORMACIÓN------ACTUALIZACIÓN DE INFORMACIÓN------ACTUALIZACIÓN DE INFORMACIÓN------ACTUALIZACIÓN DE INFORMACIÓN------ACTUALIZACIÓN DE INFORMACIÓN
+------ACTUALIZACIÓN DE INFORMACIÓN------ACTUALIZACIÓN DE INFORMACIÓN------ACTUALIZACIÓN DE INFORMACIÓN------ACTUALIZACIÓN DE INFORMACIÓN------ACTUALIZACIÓN DE INFORMACIÓN
+------ACTUALIZACIÓN DE INFORMACIÓN------ACTUALIZACIÓN DE INFORMACIÓN------ACTUALIZACIÓN DE INFORMACIÓN------ACTUALIZACIÓN DE INFORMACIÓN------ACTUALIZACIÓN DE INFORMACIÓN
 */
 
 //1 Insertar tipo de tareas.
@@ -588,10 +538,11 @@ Personas*borrarPersonas(Personas*lista,string cedula){ //Borrar personas de list
 }
 
 //4 Insertar tareas activas a una persona X.
-void agregarTareaAPersona(Personas* listaPersonas, TiposTarea* listaTipos, int &id){
+void agregarTareaAPersona(Personas* listaPersonas, TiposTarea* listaTipos){
     string cedula;
     clearScreen();
-    cout << "Ingrese la cÃ©dula de la persona: ";
+    imprimirPersonas(listaPersonas1,0);
+    cout <<endl<< "Ingrese la cédula de la persona: ";
     cin >> cedula;
 
     Personas* persona = buscarPersonas(listaPersonas, cedula);
@@ -605,12 +556,12 @@ void agregarTareaAPersona(Personas* listaPersonas, TiposTarea* listaTipos, int &
     string descripcion, nivelImportancia, hora;
     int dia, mes, year;
 
-    cout << "DescripciÃ³n de la tarea: ";
+    cout << "Descripción de la tarea: ";
     cin.ignore();
     getline(cin, descripcion);
     cout << "Nivel de importancia de la tarea (Baja, Media, Alta): ";
     getline (cin, nivelImportancia);
-    cout << "Fecha de la tarea (dia mes aÃ±o): ";
+    cout << "Fecha de la tarea (dia mes año): ";
     cin >> dia >> mes >> year;
     cout << "Hora de la tarea (HH:MM): ";
     cin >> hora;
@@ -626,9 +577,11 @@ void agregarTareaAPersona(Personas* listaPersonas, TiposTarea* listaTipos, int &
         sleep(2);
         return;
     }
-
-    listaPendientes* nuevaTarea = new listaPendientes(id, descripcion, nivelImportancia, dia, mes, year, hora, tipoTarea);
-    id ++;
+    listaPendientes*tempPendientes=persona->tareas;
+    while(tempPendientes->sig!=NULL){
+        tempPendientes=tempPendientes->sig;
+    }
+    listaPendientes* nuevaTarea = new listaPendientes(tempPendientes->id+1, descripcion, nivelImportancia, dia, mes, year, hora, tipoTarea);
     if (persona->tareas == NULL){
         persona->tareas = nuevaTarea;
     }
@@ -636,7 +589,7 @@ void agregarTareaAPersona(Personas* listaPersonas, TiposTarea* listaTipos, int &
         persona->tareas = insertarTareaPendiente(persona->tareas, nuevaTarea);
     }
     clearScreen();
-    cout << "Tarea agregada con Ã©xito" << endl;
+    cout << "Tarea agregada con éxito" << endl;
     sleep(3);
     clearScreen();
 }
@@ -644,8 +597,9 @@ void agregarTareaAPersona(Personas* listaPersonas, TiposTarea* listaTipos, int &
 //5 Modificar tareas activas, para que se puede reprogramar en otra fecha y hora.
 void reprogramarTareasDePersonas(Personas* listaPersonas){
     string cedula;
-    cout << "Ingrese la cÃ©dula de la persona: ";
+    cout << "Ingrese la cédula de la persona: ";
     cin >> cedula;
+    cin.ignore(10000,'\n');
 
     Personas* persona = buscarPersonas(listaPersonas, cedula);
     if (persona == NULL){
@@ -659,6 +613,8 @@ void reprogramarTareasDePersonas(Personas* listaPersonas){
     imprimirTareasDePersona(persona);
     cout << "Ingrese el ID de la tarea a reprogramar: ";
     cin >> idTarea;
+    cin.ignore(10000,'\n');
+
 
     listaPendientes* tarea = persona->tareas;
     while (tarea != NULL){
@@ -730,14 +686,13 @@ Personas*insertarSubtarea(Personas*lista,string cedulaPersona,int idTarea,string
                                 return lista;
                             }
                         }
-                        else{
-                            tempPendientes=tempPendientes->sig;
-                        }
+                        tempPendientes=tempPendientes->sig;
                     }
+                    cout<<endl<<"Tarea no encontrada"<<endl;
+                    sleep(2);
+                    return lista;
                 }
-                else{
-                    tempPersonas=tempPersonas->sig;
-                }
+                tempPersonas=tempPersonas->sig;
             }
             cout<<"Persona no encontrada, asegurese que la cedula sea la correcta."<<endl;
             sleep(2);
@@ -764,7 +719,7 @@ Personas*modificarSubtarea(Personas*lista,string cedulaPersona,int idTarea, int 
                         }
                         tempAvance = tempAvance->sig;
                     }
-                    // Si no se encontrÃ³ la subtarea, mostramos un mensaje de error (opcional)
+                    // Si no se encontró la subtarea, mostramos un mensaje de error (opcional)
                     cout << "Subtarea no encontrada" << endl;
                     return lista;
                 }
@@ -785,7 +740,7 @@ Personas*modificarSubtarea(Personas*lista,string cedulaPersona,int idTarea, int 
     return lista;
 }
 
-//9 Insertar que una tarea se completÃ³ (insertando en la sublista de tareas realizadas y borradas de la sublista de tareas activas).
+//9 Insertar que una tarea se completó (insertando en la sublista de tareas realizadas y borradas de la sublista de tareas activas).
 Personas*marcarTareaComoCompletada(Personas* persona,string cedulaPersona, int idTarea) {
     Personas*tempPersonas=persona;
     while(tempPersonas!=NULL){
@@ -842,7 +797,7 @@ Personas*marcarTareaComoCompletada(Personas* persona,string cedulaPersona, int i
             tempPersonas=tempPersonas->sig;
         }
     }
-    // Si no se encontrÃ³ la tarea, mostrar un mensaje de error
+    // Si no se encontró la tarea, mostrar un mensaje de error
     cout << "Persona no fue encontrada" <<endl;
     return persona;
 }
@@ -853,7 +808,7 @@ Personas*marcarTareaComoCompletada(Personas* persona,string cedulaPersona, int i
 -------CONSULTAS-------CONSULTAS-------CONSULTAS-------CONSULTAS-------CONSULTAS-------CONSULTAS-------CONSULTAS-------CONSULTAS-------CONSULTAS-------CONSULTAS-------CONSULTAS
 */
 
-//1 Â¿CuÃ¡l es la persona que tiene mÃ¡s tareas activas?
+//1 ¿Cuál es la persona que tiene más tareas activas?
 void personaConMasTareasActivas(Personas* listaPersonas){
     if (listaPersonas == NULL){
         cout << "No hay personas en la lista." << endl;
@@ -893,7 +848,7 @@ void personaConMasTareasActivas(Personas* listaPersonas){
 }
 
 
-//2 Â¿CuÃ¡l es la persona que tiene mÃ¡s tareas activas de un tipo X?
+//2 ¿Cuál es la persona que tiene más tareas activas de un tipo X?
 void personaConMasTareasPorTipo(Personas* listaPersonas, TiposTarea* listaTipos) {
     if (listaPersonas == NULL) {
         cout << "No hay personas en la lista." << endl;
@@ -917,7 +872,7 @@ void personaConMasTareasPorTipo(Personas* listaPersonas, TiposTarea* listaTipos)
     }
 
     if (nombreTipo.empty()) {
-        cout << "No se encontrÃ³ el tipo de tarea con ID " << idTipo << "." << endl;
+        cout << "No se encontró el tipo de tarea con ID " << idTipo << "." << endl;
         return;
     }
 
@@ -939,7 +894,7 @@ void personaConMasTareasPorTipo(Personas* listaPersonas, TiposTarea* listaTipos)
             tareasTemp = tareasTemp->sig;
         }
 
-        // Comparamos el contador con el mÃ¡ximo
+        // Comparamos el contador con el máximo
         if (contadorTareas > maxTareas) {
             maxTareas = contadorTareas;
             empatados.clear();
@@ -953,7 +908,7 @@ void personaConMasTareasPorTipo(Personas* listaPersonas, TiposTarea* listaTipos)
 
     // Mostramos el resultado
     if (maxTareas > 0) {
-        cout << "Persona(s) con mÃ¡s tareas activas del tipo '" << nombreTipo << "': " << endl;
+        cout << "Persona(s) con más tareas activas del tipo '" << nombreTipo << "': " << endl;
         for (Personas* persona : empatados) {
             cout << persona->nombre << " " << persona->apellido << "(" << maxTareas<<")" << endl;
         }
@@ -962,7 +917,7 @@ void personaConMasTareasPorTipo(Personas* listaPersonas, TiposTarea* listaTipos)
     }
 }
 
-//3 Â¿QuÃ© tipo de tarea es el mÃ¡s comÃºn? En caso de empate indicarlo.
+//3 ¿Qué tipo de tarea es el más común? En caso de empate indicarlo.
 void tipoDeTareaMasComun(Personas* listaPersonas, TiposTarea* listaTipos) {
     if (listaPersonas == NULL) {
         cout << "No hay personas en la lista." << endl;
@@ -986,7 +941,7 @@ void tipoDeTareaMasComun(Personas* listaPersonas, TiposTarea* listaTipos) {
         temp = temp->sig;
     }
 
-    // Determinar el tipo de tarea mÃ¡s comÃºn
+    // Determinar el tipo de tarea más común
     int maxTareas = 0;
     vector<string> tiposComunes;
 
@@ -1018,7 +973,7 @@ void tipoDeTareaMasComun(Personas* listaPersonas, TiposTarea* listaTipos) {
 
     // Mostrar los resultados
     if (maxTareas > 0) {
-        cout << "Tipo(s) de tarea mÃ¡s comÃºn(es) con " << maxTareas << "tareas asociadas:" << endl;
+        cout << "Tipo(s) de tarea más común(es) con " << maxTareas << "tareas asociadas:" << endl;
         for (const string& nombreTipo : tiposComunes) {
             cout << "Nombre de Tipo de Tarea: " << nombreTipo << endl;
         }
@@ -1027,7 +982,7 @@ void tipoDeTareaMasComun(Personas* listaPersonas, TiposTarea* listaTipos) {
     }
 }
 
-//4 Â¿CuÃ¡l es la persona que tiene mÃ¡s tareas vencidas de un tipo X dado una fecha Y.
+//4 ¿Cuál es la persona que tiene más tareas vencidas de un tipo X dado una fecha Y.
 void contarTareasVencidasPorTipo(Personas* lista, int idTipoTarea, int dia, int mes, int year, string hora) {
     map<string,int> personasCantidadVencida;
     Personas* personaActual = lista;
@@ -1063,7 +1018,7 @@ void contarTareasVencidasPorTipo(Personas* lista, int idTipoTarea, int dia, int 
     }
 }
 
-//5 Â¿CuÃ¡l es el tipo de tareas mÃ¡s comÃºn que se vence sin completarse, dado una fecha Y.
+//5 ¿Cuál es el tipo de tareas más común que se vence sin completarse, dado una fecha Y.
 void tipoTareaMasComunVencida(Personas* lista, int dia,int mes,int year,string hora) {
     map<int, int> conteoTipos; // Mapa para contar las ocurrencias de cada tipo de tarea
 
@@ -1098,7 +1053,7 @@ void tipoTareaMasComunVencida(Personas* lista, int dia,int mes,int year,string h
     }
 }
 
-//6 Â¿CuÃ¡l es el tipo de importancia mÃ¡s usado por las personas?
+//6 ¿Cuál es el tipo de importancia más usado por las personas?
 void importanciaMasComunListaPendientes(Personas*lista){ //Imprime en terminal la el tipo de importancia de las tareas mas comun entre las personas de la lista Personas
     int importanciaBaja=0;
     int importanciaMedia=0;
@@ -1153,8 +1108,8 @@ void importanciaMasComunListaPendientes(Personas*lista){ //Imprime en terminal l
     }
 }
 
-//7 Â¿QuÃ© es el tipo de tarea mÃ¡s comÃºn en tareas activas de importancia media?
-void tipoTareaActivasMasComunEnImportanciaMedia(Personas*lista){ //Imprime el tipoTarea mÃ¡s comÃºn entre la tareas activas de importnacia media de las personas de la lista Personas
+//7 ¿Qué es el tipo de tarea más común en tareas activas de importancia media?
+void tipoTareaActivasMasComunEnImportanciaMedia(Personas*lista){ //Imprime el tipoTarea más común entre la tareas activas de importnacia media de las personas de la lista Personas
     map<int,int> contadorTiposTarea;
     if(lista==NULL){
         cout<<endl<<"La lista personas esta vacia."<<endl;
@@ -1194,8 +1149,8 @@ void tipoTareaActivasMasComunEnImportanciaMedia(Personas*lista){ //Imprime el ti
     return;
 }
 
-//8 Â¿QuÃ© es el tipo de tarea mÃ¡s comÃºn en tareas realizadas de importancia Alta?
-void tipoTareaRealizadasMasComunEnImportanciaAlta(Personas*lista){ //Imprime el tipoTarea mÃ¡s comÃºn entre la tareas completadas de importancia alta de las personas de la lista Personas
+//8 ¿Qué es el tipo de tarea más común en tareas realizadas de importancia Alta?
+void tipoTareaRealizadasMasComunEnImportanciaAlta(Personas*lista){ //Imprime el tipoTarea más común entre la tareas completadas de importancia alta de las personas de la lista Personas
     map<int,int> contadorTiposTarea;
     if(lista==NULL){
         cout<<endl<<"La lista personas esta vacia."<<endl;
@@ -1303,12 +1258,14 @@ void imprimirTareasActivasFecha(Personas*lista,string cedula,string rangoFecha){
         if(tempPersonas->cedula==cedula){
             listaPendientes*tempPendientes=tempPersonas->tareas;
             while(tempPendientes!=NULL){
-                if(stoi(rangoFecha.substr(0,2))<=tempPendientes->dia
-                        && stoi(rangoFecha.substr(3,2))<=tempPendientes->mes
-                        && stoi(rangoFecha.substr(6,2))<=tempPendientes->year
-                        && stoi(rangoFecha.substr(9,2))>=tempPendientes->dia
-                        && stoi(rangoFecha.substr(12,2))>=tempPendientes->mes
-                        && stoi(rangoFecha.substr(15,2))>=tempPendientes->year){
+                if((stoi(rangoFecha.substr(6,2))<tempPendientes->year && stoi(rangoFecha.substr(15,2))>tempPendientes->year)
+                    ||(stoi(rangoFecha.substr(6,2))==tempPendientes->year && stoi(rangoFecha.substr(3,2))<tempPendientes->mes && stoi(rangoFecha.substr(15,2))>tempPendientes->year)
+                    ||(stoi(rangoFecha.substr(6,2))==tempPendientes->year && stoi(rangoFecha.substr(3,2))==tempPendientes->mes && stoi(rangoFecha.substr(0,2))<=tempPendientes->dia && stoi(rangoFecha.substr(15,2))>tempPendientes->year)
+                    ||(stoi(rangoFecha.substr(6,2))==tempPendientes->year && stoi(rangoFecha.substr(3,2))==tempPendientes->mes && stoi(rangoFecha.substr(0,2))<=tempPendientes->dia && stoi(rangoFecha.substr(15,2))==tempPendientes->year && stoi(rangoFecha.substr(12,2))>tempPendientes->mes)
+                    ||(stoi(rangoFecha.substr(6,2))==tempPendientes->year && stoi(rangoFecha.substr(3,2))==tempPendientes->mes && stoi(rangoFecha.substr(0,2))<=tempPendientes->dia && stoi(rangoFecha.substr(15,2))==tempPendientes->year && stoi(rangoFecha.substr(12,2))==tempPendientes->mes && stoi(rangoFecha.substr(9,2))>=tempPendientes->dia)
+                    ||(stoi(rangoFecha.substr(6,2))==tempPendientes->year && stoi(rangoFecha.substr(3,2))<tempPendientes->mes && stoi(rangoFecha.substr(15,2))==tempPendientes->year && stoi(rangoFecha.substr(12,2))==tempPendientes->mes && stoi(rangoFecha.substr(9,2))>=tempPendientes->dia)
+                    ||(stoi(rangoFecha.substr(6,2))<tempPendientes->year && stoi(rangoFecha.substr(15,2))==tempPendientes->year && stoi(rangoFecha.substr(12,2))==tempPendientes->mes && stoi(rangoFecha.substr(9,2))>=tempPendientes->dia)
+                   ){
 
                     cout<<endl<<"   ID: "<<tempPendientes->id;
                     cout<<endl<<"   Descripcion: "<<tempPendientes->descripcion;
@@ -1331,10 +1288,10 @@ void imprimirTareasActivasFecha(Personas*lista,string cedula,string rangoFecha){
     return;
 }
 
-//5 Imprimir las tareas prÃ³ximo a vencer (menos de una semana) de una fecha X.
+//5 Imprimir las tareas próximo a vencer (menos de una semana) de una fecha X.
 void imprimirTareasProximasVencer(Personas* listaPersonas){
     int dia, mes, year;
-    cout << "Ingrese la fecha (dÃ­a mes aÃ±o): ";
+    cout << "Ingrese la fecha (día mes año): ";
     cin >> dia >> mes >> year;
     if (listaPersonas == NULL){
         cout << "No hay personas en la lista." << endl;
@@ -1350,9 +1307,9 @@ void imprimirTareasProximasVencer(Personas* listaPersonas){
             int diasRestantes = calcularDiasRestantes(dia, mes, year, tempTarea->dia, tempTarea->mes, tempTarea->year);
 
             if (diasRestantes >= 0 && diasRestantes <= 7){
-                cout << "Tarea prÃ³xima a vencer de " << tempPersona->nombre << " " << tempPersona->apellido << ":" << endl;
+                cout << "Tarea próxima a vencer de " << tempPersona->nombre << " " << tempPersona->apellido << ":" << endl;
                 cout << "----------------------------------------------";
-                cout << "   DescripciÃ³n: " << tempTarea->descripcion << endl;
+                cout << "   Descripción: " << tempTarea->descripcion << endl;
                 cout << "   Fecha de vencimiento: " << tempTarea->dia << "/" << tempTarea->mes << "/" << tempTarea->year << endl;
                 cout << "   Hora: " << tempTarea->hora << endl;
                 cout << "----------------------------------------------";
@@ -1363,7 +1320,7 @@ void imprimirTareasProximasVencer(Personas* listaPersonas){
         tempPersona = tempPersona->sig;
     }
     if (!hayTareasProximas){
-        cout << "No hay tareas prÃ³ximas a vencer." << endl;
+        cout << "No hay tareas próximas a vencer." << endl;
     }
     string salir;
     cout<<endl<<"Digite cualquiera tecla para salir: "<<endl;
@@ -1458,7 +1415,7 @@ void imprimirTareasRealizadasAl100Porciento(Personas* lista) {
         while (tarea != NULL) {
             if (tarea->porcentajeCumplimiento == 100) {
                 cout<<endl<<contador<< ")   ID: "<<tarea->id<<endl;
-                cout<<"     DescripciÃ³n: " << tarea->descripcion<<endl;
+                cout<<"     Descripción: " << tarea->descripcion<<endl;
                 cout<<"     Comentario: "<<tarea->comentario<<endl;
             }
             tarea = tarea->sig;
@@ -1496,8 +1453,6 @@ Personas*agregarTareaAPersonaCarga(Personas* listaPersonas,string cedula,int idT
     }
     return listaPersonas;
 }
-
-
 
 void cargarDatos(){
     //Insertando tipos tarea
@@ -1543,7 +1498,6 @@ int main(){
     int opcion1=0;
     int opcion2=0;
     int idTipos=0;
-    int idD = 1;
     bool Carga=false;
     while(true){
         system("cls");
@@ -1567,7 +1521,7 @@ int main(){
                     system("cls");
                     opcion2=0;
                     cout<<"----------Actualizar----------"<<endl;
-                    cout<<"Bienvenido a Actualizar. Dale ponte al dÃ­a."
+                    cout<<"Bienvenido a Actualizar. Dale ponte al día."
                     <<endl<<endl<<"Insertar tipos de tareas (1)"
                     <<endl<<"Insertar personas a la lista (2)"
                     <<endl<<"Borrar personas de la lista (3)"
@@ -1639,7 +1593,8 @@ int main(){
                             }
                             else{
                                 string personaBorrar;
-                                cout<<"Digite la cedula de la persona a borrar: ";
+                                imprimirPersonas(listaPersonas1);
+                                cout<<endl<<"Digite la cedula de la persona a borrar: ";
                                 getline(cin,personaBorrar);
                                 listaPersonas1=borrarPersonas(listaPersonas1,personaBorrar);
                                 continue;
@@ -1647,27 +1602,35 @@ int main(){
                         }
                         case 4:{ //Insertar tareas (4)
                             clearScreen();
-                            agregarTareaAPersona(listaPersonas1, listaTiposTarea1, idD);
+                            agregarTareaAPersona(listaPersonas1, listaTiposTarea1);
                             clearScreen();
                             sleep(2);
                             continue;
                         }
                         case 5:{ //Modificar tareas activas (5)
                             clearScreen();
+                            imprimirPersonas(listaPersonas1);
                             reprogramarTareasDePersonas(listaPersonas1);
                             sleep(2);
                             continue;
                         }
                         case 6:{ //Borrar tareas activa (6)
                             clearScreen();
+                            imprimirPersonas(listaPersonas1);
                             borrarTareaDePersona(listaPersonas1);
                             sleep(2);
                             continue;
                         }
                         case 7:{ //Insertar Subtareas (7)
                             while(true){
+                                if(listaPersonas1==NULL){
+                                    cout<<"Lo sentimos la lista esta vacia"<<endl;
+                                    sleep(2);
+                                    break;
+                                }
                                 clearScreen();
                                 string cedula;
+                                imprimirPersonas(listaPersonas1);
                                 cout<<"Digite la cedula de la persona que quiera insertarle una subtarea (Formato de la cedula: 123-456): ";
                                 getline(cin,cedula);
                                 if(comprobarCedulasPersonas(listaPersonas1,cedula,true)){
@@ -1679,7 +1642,8 @@ int main(){
                                         cout<<endl<<"Escriba la id de la tarea a la cual se le quiere insertar subtareas (Recuerde que solo es posible insertar subtareas a tareas de tipo Estudio): ";
                                         cin>>idTarea;
                                         cin.ignore(10000,'\n');
-                                        if(buscarTipoTarea(listaTiposTarea1,idTarea)->nombreTipoTarea=="Estudio"){
+                                        listaPendientes*tempPendientes=buscarTarea(temp,idTarea);
+                                        if(tempPendientes->enlaceTipos->nombreTipoTarea=="Estudio"){
                                             string nombreTarea;
                                             string comentario;
                                             cout<<endl<<"Escriba el nombre de la subtarea: ";
@@ -1709,8 +1673,14 @@ int main(){
                         }
                         case 8:{ //Modificar el avance de una subtarea (8)
                             while(true){
+                                if(listaPersonas1==NULL){
+                                    cout<<"Lo sentimos, la lista esta vacia"<<endl;
+                                    sleep(2);
+                                    break;
+                                }
                                 clearScreen();
                                 string cedula;
+                                imprimirPersonas(listaPersonas1);
                                 cout<<"Porfavor digite la cedula de la persona a modificar su subtarea (El formato de la cedula es 123-456): "<<endl;
                                 getline(cin,cedula);
                                 if(comprobarCedulasPersonas(listaPersonas1,cedula,true)){
@@ -1723,7 +1693,8 @@ int main(){
                                         cout<<"Porfavor, digite la id de la tarea a la cual se le quiere modificar sus subtareas (Recuerde que solo las tareas de tipo Estudio tienen subtareas):"<<endl;
                                         cin>>idTarea;
                                         cin.ignore(10000,'\n');
-                                        if(buscarTipoTarea(listaTiposTarea1,idTarea)->nombreTipoTarea=="Estudio"){
+                                        listaPendientes*tempPendientes=buscarTarea(temp,idTarea);
+                                        if(tempPendientes->enlaceTipos->nombreTipoTarea=="Estudio"){
                                             int idSubTarea;
                                             int nuevoAvance;
                                             clearScreen();
@@ -1754,6 +1725,17 @@ int main(){
                                     cout<<"Lo sentimos, el formato de la cedula es incorrecta, por favor intentelo de nuevo."<<endl;
                                     sleep(2);
                                 }
+                            }
+                            continue;
+                        }
+                        case 9:{ //Completar una tarea (9)
+                            while(true){
+                                string cedula;
+                                imprimirPersonas(listaPersonas1);
+                                cout<<endl<<"Digite la cedula de la persona a completar una de sus tareas: "<<endl;
+                                getline(cin,cedula);
+                                /*if(comprobarCedulasPersonas(listaPersonas1,cedula,true))*/
+
                             }
                             continue;
                         }
@@ -1870,7 +1852,7 @@ int main(){
                     cin>>opcion3;
                     cin.ignore(10000,'\n');
                     switch(opcion3){
-                        case 1:{
+                        case 1:{ //Imprimir la lista de tipos de tareas(1)
                             clearScreen();
                             char nada;
                             imprimirTiposTarea(listaTiposTarea1);
@@ -1879,7 +1861,7 @@ int main(){
                             cin.ignore(10000,'\n');
                             continue;
                         }
-                        case 2:{
+                        case 2:{ //Imprimir la lista de personas (2
                             clearScreen();
                             char nada;
                             imprimirPersonas(listaPersonas1);
@@ -1888,17 +1870,18 @@ int main(){
                             cin.ignore(10000,'\n');
                             continue;
                         }
-                        case 3:{
+                        case 3:{ //Imprimir las personas sin tarea (3)
                             clearScreen();
                             imprimirPersonasSinTareas(listaPersonas1);
                             sleep(2);
                             continue;
                             }
-                        case 4:{
+                        case 4:{ //Imprimir las tareas activas de una persona X (Por fecha) (4)
                             while(true){
                                 clearScreen();
                                 string cedula;
                                 string rangoFecha;
+                                imprimirPersonas(listaPersonas1);
                                 cout<<"Introduce la cedula de la persona: "<<endl;
                                 getline(cin,cedula);
                                 cout<<"Introduce el rango de fecha a buscar(El formato es 01/01/01-02/02/02): "<<endl;
@@ -1915,16 +1898,17 @@ int main(){
                             }
                             continue;
                         }
-                        case 5:{
+                        case 5:{ //Imprimir las tareas a vencer (5)
                             clearScreen();
                             imprimirTareasProximasVencer(listaPersonas1);
                             sleep(2);
                             continue;
                         }
-                        case 6:{
+                        case 6:{ //Imprimir las subtareas de una tarea (6)
                             while(true){
                                 clearScreen();
                                 string cedula;
+                                imprimirPersonas(listaPersonas1);
                                 cout<<"Escriba la cedula de la persona a la cual quiere imprimir sus subtareas (El formato es 123-456): ";
                                 getline(cin,cedula);
                                 if(comprobarCedulasPersonas(listaPersonas1,cedula,true)){
@@ -1936,7 +1920,8 @@ int main(){
                                         cout<<endl<<"Digite la id de la tarea a la cual se le quiere imprimir las subtareas (Recuerde que solo las tareas de tipo Estudios tiene subtareas): ";
                                         cin>>idTarea;
                                         cin.ignore(10000,'\n');
-                                        if(buscarTipoTarea(listaTiposTarea1,idTarea)->nombreTipoTarea=="Estudio"){
+                                        listaPendientes*tempPendientes=buscarTarea(temp,idTarea);
+                                        if(tempPendientes->enlaceTipos->nombreTipoTarea=="Estudio"){
                                             clearScreen();
                                             imprimirSubtareas(listaPersonas1,cedula,idTarea);
                                             break;
@@ -1958,7 +1943,7 @@ int main(){
                             continue;
 
                         }
-                        case 9:{
+                        case 9:{ //Salir (9)
                             salir=true;
                             continue;
                         }
