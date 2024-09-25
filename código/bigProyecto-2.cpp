@@ -746,9 +746,7 @@ Personas*marcarTareaComoCompletada(Personas* persona,string cedulaPersona, int i
     while(tempPersonas!=NULL){
         if(tempPersonas->cedula==cedulaPersona){
             listaPendientes* tarea = persona->tareas;
-            listaPendientes* anterior = nullptr;
-
-            while (tarea != nullptr) {
+            while (tarea != NULL) {
                 if (tarea->id == idTarea) {
                     string comentario;
                     cout<<"Escriba un comentario sobre la tarea: "<<endl;
@@ -761,13 +759,19 @@ Personas*marcarTareaComoCompletada(Personas* persona,string cedulaPersona, int i
                         persona->tareasTerminadas = nuevaTareaCompletada;
 
                         // Eliminar la tarea de la lista de tareas activas
-                        if (anterior == nullptr) {
-                            persona->tareas = tarea->sig;
-                        } else {
-                            anterior->sig = tarea->sig;
+                        listaPendientes*tempPendientes=tempPersonas->tareas;
+                        if(tempPendientes->sig==NULL){
+                            tempPendientes=NULL;
+                            return persona;
                         }
-
-                        delete tarea; // Liberar memoria de la tarea eliminada
+                        while(tempPendientes->sig->id!=idTarea){
+                            tempPendientes=tempPendientes->sig;
+                        }
+                        tempPendientes->sig=tempPendientes->sig->sig;
+                        //persona->tareas = tarea->sig;
+                        //} else {
+                        //anterior->sig = tarea->sig;
+                        //}
                         return persona;
                         }
                     else{
@@ -777,21 +781,31 @@ Personas*marcarTareaComoCompletada(Personas* persona,string cedulaPersona, int i
                         persona->tareasTerminadas = nuevaTareaCompletada;
 
                         // Eliminar la tarea de la lista de tareas activas
-                        if (anterior == nullptr) {
-                            persona->tareas = tarea->sig;
-                        } else {
-                            anterior->sig = tarea->sig;
+                        listaPendientes*tempPendientes=tempPersonas->tareas;
+                        if(tempPendientes->sig==NULL){
+                            tempPendientes=NULL;
+                            return persona;
                         }
+                        while(tempPendientes->sig->id!=idTarea){
+                            tempPendientes=tempPendientes->sig;
+                        }
+                        tempPendientes->sig=tempPendientes->sig->sig;
+                        //persona->tareas = tarea->sig;
+                        //} else {
+                        //anterior->sig = tarea->sig;
+                        //}
 
-                        delete tarea; // Liberar memoria de la tarea eliminada
+                        //if (anterior == nullptr) {
+                        //persona->tareas = tarea->sig;
+                        //} else {
+                        //anterior->sig = tarea->sig;
+                        //}
                         return persona;
                     }
                 }
-                anterior = tarea;
                 tarea = tarea->sig;
             }
-            cout<<"La tarea no fue encontrada"<<endl;
-            return persona;
+            throw 505;
         }
         else{
             tempPersonas=tempPersonas->sig;
@@ -1340,6 +1354,7 @@ void imprimirSubtareas(Personas*lista,string cedulaPersona,int idTarea,bool sali
                     cout << "Subtareas:" << endl;
                     while (tempAvance != NULL) {
                         cout << "  - ID: " << tempAvance->idSubtarea <<endl;
+                        cout << "    Nombre: "<<tempAvance->nombreTarea<<endl;
                         cout << "    Descripcion: " << tempAvance->nombreTarea <<endl;
                         cout << "    Porcentaje de avance: " << tempAvance->porcentaje << "%" <<endl;
                         cout << "    Completada: " << (tempAvance->completado ? "Si" : "No")<<endl;
@@ -1730,11 +1745,46 @@ int main(){
                         }
                         case 9:{ //Completar una tarea (9)
                             while(true){
+                                if(listaPersonas1==NULL){
+                                    clearScreen();
+                                    cout<<"Lista vacia, volviendo al menu."<<endl;
+                                    sleep(2);
+                                    break;
+                                }
+                                clearScreen();
                                 string cedula;
                                 imprimirPersonas(listaPersonas1);
                                 cout<<endl<<"Digite la cedula de la persona a completar una de sus tareas: "<<endl;
                                 getline(cin,cedula);
-                                /*if(comprobarCedulasPersonas(listaPersonas1,cedula,true))*/
+                                if(comprobarCedulasPersonas(listaPersonas1,cedula,true)){
+                                    while(true){
+                                        clearScreen();
+                                        int idTarea;
+                                        Personas*temp=buscarPersonas(listaPersonas1,cedula);
+                                        imprimirTareasDePersona(temp);
+                                        cout<<"Digite la id de la tarea que va a completar: "<<endl;
+                                        cin>>idTarea;
+                                        cin.ignore(10000,'\n');
+                                        try{
+                                            clearScreen();
+                                            marcarTareaComoCompletada(listaPersonas1,cedula,idTarea);
+                                            cout<<"La tarea fue completada con exito"<<endl;
+                                            sleep(2);
+                                            break;
+                                        }
+                                        catch (int myNum){
+                                            clearScreen();
+                                            cout<<"Error, la id fue mal dada"<<endl;
+                                            sleep(2);
+                                        }
+                                    }
+                                    break;
+                                }
+                                else{
+                                    clearScreen();
+                                    cout<<"La cedula digitada es incorrecta, por favor vuelva a intentarlo."<<endl;
+                                    sleep(2);
+                                }
 
                             }
                             continue;
@@ -1906,6 +1956,11 @@ int main(){
                         }
                         case 6:{ //Imprimir las subtareas de una tarea (6)
                             while(true){
+                                if(listaPersonas1==NULL){
+                                    cout<<"La lista esta vacia, volviendo"<<endl;
+                                    sleep(2);
+                                    break;
+                                }
                                 clearScreen();
                                 string cedula;
                                 imprimirPersonas(listaPersonas1);
