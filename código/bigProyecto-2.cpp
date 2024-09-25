@@ -745,7 +745,7 @@ Personas*marcarTareaComoCompletada(Personas* persona,string cedulaPersona, int i
     Personas*tempPersonas=persona;
     while(tempPersonas!=NULL){
         if(tempPersonas->cedula==cedulaPersona){
-            listaPendientes* tarea = persona->tareas;
+            listaPendientes* tarea = tempPersonas->tareas;
             while (tarea != NULL) {
                 if (tarea->id == idTarea) {
                     string comentario;
@@ -1536,7 +1536,7 @@ Personas*marcarTareaComoCompletadaAuto(Personas* persona,string cedulaPersona, i
     Personas*tempPersonas=persona;
     while(tempPersonas!=NULL){
         if(tempPersonas->cedula==cedulaPersona){
-            listaPendientes* tarea = persona->tareas;
+            listaPendientes* tarea = tempPersonas->tareas;
             while (tarea != NULL) {
                 if (tarea->id == idTarea) {
                     //string comentario;
@@ -1626,6 +1626,7 @@ void cargarDatos(){
     listaPersonas1=agregarTareaAPersonaCarga(listaPersonas1,"672-192",0,"Limpiar la cocina","Baja",30,12,30,"23:45",1);
     listaPersonas1=agregarTareaAPersonaCarga(listaPersonas1,"644-633",0,"Salvar a la princesa","Alta",12,12,24,"23:45",1);
     //Insertando subtareas
+    /*
     listaPersonas1=insertarSubtareaAuto(listaPersonas1,"345-214",0,"Terminar las listas","Ya casi");
     listaPersonas1=insertarSubtareaAuto(listaPersonas1,"345-214",0,"Completar las funciones de Actualización de información","Ya casi");
     listaPersonas1=insertarSubtareaAuto(listaPersonas1,"345-214",0,"Completar las funciones de Consultas","Ya casi");
@@ -1633,6 +1634,7 @@ void cargarDatos(){
     listaPersonas1=insertarSubtareaAuto(listaPersonas1,"345-214",0,"Terminar la documentacion","Ya casi");
     listaPersonas1=insertarSubtareaAuto(listaPersonas1,"345-214",0,"Arreglar bugs","Ya casi");
     listaPersonas1=insertarSubtareaAuto(listaPersonas1,"345-214",0,"Suplicarle a la profe por un 100%","Ya casi");
+    */
     //Insertanto tareas completadas
     listaPersonas1=marcarTareaComoCompletadaAuto(listaPersonas1,"777-777",1,"Facil");
     listaPersonas1=marcarTareaComoCompletadaAuto(listaPersonas1,"777-777",2,"Que caro");
