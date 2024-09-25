@@ -1626,7 +1626,7 @@ void cargarDatos(){
     listaPersonas1=agregarTareaAPersonaCarga(listaPersonas1,"672-192",0,"Limpiar la cocina","Baja",30,12,30,"23:45",1);
     listaPersonas1=agregarTareaAPersonaCarga(listaPersonas1,"644-633",0,"Salvar a la princesa","Alta",12,12,24,"23:45",1);
     //Insertando subtareas
-
+    /*
     listaPersonas1=insertarSubtareaAuto(listaPersonas1,"345-214",0,"Terminar las listas","Ya casi");
     listaPersonas1=insertarSubtareaAuto(listaPersonas1,"345-214",0,"Completar las funciones de Actualización de información","Ya casi");
     listaPersonas1=insertarSubtareaAuto(listaPersonas1,"345-214",0,"Completar las funciones de Consultas","Ya casi");
@@ -1634,7 +1634,7 @@ void cargarDatos(){
     listaPersonas1=insertarSubtareaAuto(listaPersonas1,"345-214",0,"Terminar la documentacion","Ya casi");
     listaPersonas1=insertarSubtareaAuto(listaPersonas1,"345-214",0,"Arreglar bugs","Ya casi");
     listaPersonas1=insertarSubtareaAuto(listaPersonas1,"345-214",0,"Suplicarle a la profe por un 100%","Ya casi");
-/*
+
     //Insertanto tareas completadas
     cout<<"pene"<<endl;
     listaPersonas1=marcarTareaComoCompletadaAuto(listaPersonas1,"777-777",1,"Facil");
