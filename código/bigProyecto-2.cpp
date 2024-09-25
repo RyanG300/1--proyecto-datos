@@ -768,10 +768,7 @@ Personas*marcarTareaComoCompletada(Personas* persona,string cedulaPersona, int i
                             tempPendientes=tempPendientes->sig;
                         }
                         tempPendientes->sig=tempPendientes->sig->sig;
-                        //persona->tareas = tarea->sig;
-                        //} else {
-                        //anterior->sig = tarea->sig;
-                        //}
+
                         return persona;
                         }
                     else{
@@ -790,16 +787,7 @@ Personas*marcarTareaComoCompletada(Personas* persona,string cedulaPersona, int i
                             tempPendientes=tempPendientes->sig;
                         }
                         tempPendientes->sig=tempPendientes->sig->sig;
-                        //persona->tareas = tarea->sig;
-                        //} else {
-                        //anterior->sig = tarea->sig;
-                        //}
 
-                        //if (anterior == nullptr) {
-                        //persona->tareas = tarea->sig;
-                        //} else {
-                        //anterior->sig = tarea->sig;
-                        //}
                         return persona;
                     }
                 }
@@ -1011,6 +999,12 @@ void contarTareasVencidasPorTipo(Personas* lista, int idTipoTarea, int dia, int 
         }
         personaActual = personaActual->sig;
     }
+    if(personasCantidadVencida.empty()){
+        clearScreen();
+        cout<<"Lo sentimos, ninguna persona tiene una tarea vencida."<<endl;
+        sleep(2);
+        return;
+    }
     string idPersonaOtro;
     int maxConteo = 0;
     for (auto par : personasCantidadVencida) {
@@ -1158,7 +1152,7 @@ void tipoTareaActivasMasComunEnImportanciaMedia(Personas*lista){ //Imprime el ti
             cantidadMasComun=pair.second;
         }
     }
-    cout<<"La tarea mas comun con importancia media es: "<<endl<<buscarTipoTarea(listaTiposTarea1,idMasComun)->nombreTipoTarea<<endl<<" con la id: "<<buscarTipoTarea(listaTiposTarea1,idMasComun)->idTipoTarea<<endl;
+    cout<<"El tipo de tarea mas comun con importancia media es: "<<endl<<buscarTipoTarea(listaTiposTarea1,idMasComun)->nombreTipoTarea<<" con la id: "<<buscarTipoTarea(listaTiposTarea1,idMasComun)->idTipoTarea<<endl;
     sleep(2);
     return;
 }
@@ -1185,6 +1179,12 @@ void tipoTareaRealizadasMasComunEnImportanciaAlta(Personas*lista){ //Imprime el 
             }
         }
         tempPersonas=tempPersonas->sig;
+    }
+    if(contadorTiposTarea.empty()){
+        clearScreen();
+        cout<<"Nadie ha completado una tarea aún, volviendo al menú."<<endl;
+        sleep(2);
+        return;
     }
     int idMasComun;
     int cantidadMasComun;
@@ -1488,6 +1488,7 @@ void cargarDatos(){
     listaPersonas1=agregarTareaAPersonaCarga(listaPersonas1,"345-214",2,"Hacer ejercicio","Media",22,9,24,"23:45",3);
     listaPersonas1=agregarTareaAPersonaCarga(listaPersonas1,"777-777",0,"Pagar a los editores","Alta",30,9,24,"12:00",2);
     listaPersonas1=agregarTareaAPersonaCarga(listaPersonas1,"123-456",0,"Cita con el medico","Media",12,11,24,"13:00",4);
+    listaPersonas1=agregarTareaAPersonaCarga(listaPersonas1,"123-456",1,"Jugar videojuegos","Media",25,1,25,"13:00",4);
     listaPersonas1=agregarTareaAPersonaCarga(listaPersonas1,"672-192",0,"Limpiar la cocina","Baja",30,12,30,"23:45",1);
     listaPersonas1=agregarTareaAPersonaCarga(listaPersonas1,"644-633",0,"Salvar a la princesa","Alta",12,12,24,"23:45",1);
 
@@ -1820,28 +1821,56 @@ int main(){
                     cin>>opcion4;
                     cin.ignore(10000,'\n');
                     switch(opcion4){
-                        case 1:{
+                        case 1:{ //Imprimir la persona con mas tareas activas (1)
                             clearScreen();
                             personaConMasTareasActivas(listaPersonas1);
                             sleep(2);
                             continue;
                         }
-                        case 2:{
+                        case 2:{ //Imprimir una persona con mas tareas activas de un determinado tipo (2)
                             clearScreen();
                             personaConMasTareasPorTipo(listaPersonas1, listaTiposTarea1);
                             sleep(2);
                             continue;
                         }
-                        case 3:{
+                        case 3:{ //Imprimir el tipo de tarea mas comun (3)
                             clearScreen();
                             tipoDeTareaMasComun(listaPersonas1, listaTiposTarea1);
                             sleep(2);
                             continue;
                         }
-                        case 6:{
+                        case 4:{ //Imprimir la persona con mas tareas vencidas de un determinado tipo (4)
+                            while(true){
+                                clearScreen();
+                                int tipoTarea;
+                                imprimirTiposTarea(listaTiposTarea1);
+                                cout<<endl<<"Digite la id del tipo tarea a la cual se le quiere ver la mayor cantidad de tareas vencidas: "<<endl;
+                                cin>>tipoTarea;
+                                cin.ignore(10000,'\n');
+                                if(buscarTipoTarea(listaTiposTarea1,tipoTarea)==NULL){
+                                    clearScreen();
+                                    cout<<"La id digitada no existe, por favor intente de nuevo."<<endl;
+                                    sleep(2);
+                                }
+                                else{
+                                    clearScreen();
+                                    int dia,mes,year;
+                                    string hora;
+                                    cout<<"Cual es la fecha limite? (formato: dia mes año, con espacios y sin nada entre): "<<endl;
+                                    cin>>dia>>mes>>year;
+                                    cin.ignore(10000,'\n');
+                                    cout<<endl<<"Y la hora? (Formato 00:00): ";
+                                    getline(cin,hora);
+                                    contarTareasVencidasPorTipo(listaPersonas1,tipoTarea,dia,mes,year,hora);
+                                }
+                            }
+                        }
+                        case 5:{ //Imprimir el tipo de tarea mas comun a vencer (5)
+                        }
+                        case 6:{ //Imprimir el tipo de importancia mas comun en la lista personas (6)
                             while(true){
                                 string exit;
-                                system("cls");
+                                clearScreen();
                                 importanciaMasComunListaPendientes(listaPersonas1);
                                 cout<<endl<<"Presione cualquier tecla para salir: "<<endl;
                                 getline(cin,exit);
@@ -1849,10 +1878,10 @@ int main(){
                             }
                             continue;
                         }
-                        case 7:{
+                        case 7:{ //Imprimir el tipo de tarea mas comun con importancia media en la lista persona (7)
                             while(true){
                                 string exit;
-                                system("cls");
+                                clearScreen();
                                 tipoTareaActivasMasComunEnImportanciaMedia(listaPersonas1);
                                 cout<<endl<<"Presione cualquier tecla para salir: "<<endl;
                                 getline(cin,exit);
@@ -1860,10 +1889,10 @@ int main(){
                             }
                             continue;
                         }
-                        case 8:{
+                        case 8:{ //Imprimir el tipo de tarea mas comun realizadas con una importancia alta (8)
                             while(true){
                                 string exit;
-                                system("cls");
+                                clearScreen();
                                 tipoTareaRealizadasMasComunEnImportanciaAlta(listaPersonas1);
                                 cout<<endl<<"Presione cualquier tecla para salir: "<<endl;
                                 getline(cin,exit);
@@ -1871,7 +1900,7 @@ int main(){
                             }
                             continue;
                         }
-                        case 9:{
+                        case 9:{ //Salir (9)
                             salir=true;
                             continue;
                         }
