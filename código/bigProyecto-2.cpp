@@ -1643,8 +1643,8 @@ void cargarDatos(){
     listaPersonas1=marcarTareaComoCompletadaAuto(listaPersonas1,"777-777",4,"Facil por 2");
     listaPersonas1=marcarTareaComoCompletadaAuto(listaPersonas1,"777-777",5,"Bonito");
     listaPersonas1=marcarTareaComoCompletadaAuto(listaPersonas1,"777-777",6,"Estoy cansado jefe");
-    listaPersonas1=marcarTareaComoCompletadaAuto(listaPersonas1,"777-777",7,"Listo");
-*/
+    listaPersonas1=marcarTareaComoCompletadaAuto(listaPersonas1,"777-777",7,"Listo");*/
+
 
 
 
